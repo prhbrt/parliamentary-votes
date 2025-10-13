@@ -1,0 +1,6 @@
+webapp/static/frontend/
+webapp/node_modules/
+.ipynb_checkpoints/
+package-lock.json
+webapp/pnpm-lock.yaml
+
