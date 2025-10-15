@@ -38,6 +38,8 @@ const resources = {
       'Votes': 'Votes',
       'Votes (%)': 'Votes (%)',
       "All topics": "All topics",
+      "Decisions": "Decisions",
+      "Impacts": "Impacts",
       
       "founded in 1614 - top 100 university": "founded in 1614 - top 100 university",
     }
@@ -85,6 +87,8 @@ const resources = {
       "unclear": "onduidelijk",
       'Votes': 'Stemmen',
       'Votes (%)': 'Stemmen (%)',
+      "Decisions": "Besluiten",
+      "Impacts": "Impacts",
 
     }
   }

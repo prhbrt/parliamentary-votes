@@ -74,8 +74,7 @@ function LanguageMenuSmall() {
 export function Header({}) {
   const { t, i18n } = useTranslation();
   const location = useLocation()
-  const [isOpen, setOpen] = useState(false)
-  const {showDecisions, setShowDecisions} = useData();
+  const {showDecisions, setShowDecisions, isOpen, setOpen } = useData();
 
   var active = "questionaire";
   if (location.pathname.startsWith('/about')) active = "about";
@@ -110,7 +109,7 @@ export function Header({}) {
     <Box key="top-bar-menu" className={`show-sm mobile-links ${isOpen? 'open ' : 'closed '}`}><Box>
       <Box display="flex" flexDirection="row">
         <Link className={`${showDecisions ? "active " : ""}`} key="nl" onClick={() => setShowDecisions(true)}>{t('Decisions')}</Link>
-        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => setShowDecisions(false)}>{t('Graphs')}</Link>
+        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => setShowDecisions(false)}>{t('Impacts')}</Link>
       </Box>
       <Box className="show-sm" display="flex" flexDirection="column-reverse" flexGrow={1} style={{backgroundColor: 'white'}}><Filters/></Box>
       <LanguageMenuSmall/>

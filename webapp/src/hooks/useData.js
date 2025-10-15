@@ -61,6 +61,8 @@ export function useThrottledSetter(setState, delay = 1000) {
 }
 
 export const FilterProvider = ({ children }) => {
+  const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
+
   const [keywords, setKeywords] = useState("");
   const [binary, setBinary] = useState(false);
   const [normalize, setNormalize] = useState(false);
@@ -69,6 +71,10 @@ export const FilterProvider = ({ children }) => {
   const [allData, setData] = useState({data: [], metadata: [], metadata_columns: [], columns: []});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [area, setArea] = useState(null);
+  const [party, setParty] = useState(null);
+  const [impact, setImpact] = useState(null);
 
   const throttledSetKeywords = useThrottledSetter(setKeywords, 1000);
   const { data, metadata, metadata_columns, columns } = allData;
@@ -82,6 +88,7 @@ export const FilterProvider = ({ children }) => {
         const jsonFile = zip.file('party_stances.json');
         if (jsonFile) {
           const jsonContent = await jsonFile.async('text');
+          window.data = JSON.parse(jsonContent);
           setData(JSON.parse(jsonContent));
         } else {
           setError(f("Couldn't get data") + ".")
@@ -114,7 +121,6 @@ export const FilterProvider = ({ children }) => {
 
   if (keywords.trim() !== "") {
     const keywords_ = keywords.toLowerCase().split(" ")
-    console.log(keywords_);
     filteredMetadata = filteredMetadata.filter(metadata => {
       return keywords_.every(keyword => {
         return [MD_DECISION_COLUMN, MD_NOTES_COLUMN, MD_TITEL_COLUMN, MD_ONDERWERP_COLUMN].some(C => metadata[C] && metadata[C].toLowerCase().includes(keyword));
@@ -126,7 +132,21 @@ export const FilterProvider = ({ children }) => {
   
   filteredData = filteredData.filter(sample => {
     return numbers.has(sample[NUMBER_COLUMN]);
-  })
+  });
+
+  if (area) {
+    const AREA_COLUMN = columns.indexOf(area);
+    const PARTY_COLUMN = columns.indexOf('party');
+    const NUMMER_COLUMN = columns.indexOf('Nummer');
+    const MD_NUMMER_COLUMN = metadata_columns.indexOf('Nummer');
+
+    const nummers = filteredData.filter(sample => sample[AREA_COLUMN] === impact && sample[PARTY_COLUMN] === party).map(sample => sample[NUMMER_COLUMN]);
+    filteredMetadata = filteredMetadata.filter(metadata => {
+      return nummers.includes(metadata[MD_NUMMER_COLUMN]);
+    })
+  }
+
+
 
   const impacts = getImpactSummaries(filteredData, columns);
   const parties = data ? Array.from(new Set(data.map(x => x[PARTY_COLUMN]))) : [];
@@ -136,13 +156,18 @@ export const FilterProvider = ({ children }) => {
     setTopic("all");
   }
 
+  function setFocus(area, party, impact) { setArea(area); setParty(party); setImpact(impact); }
+  function resetFocus() { setParty(null); setImpact(null); setArea(null); }
+
   return <FilterContext.Provider value={{
     error, loading, impacts, reset, parties,
     data: filteredData, metadata: filteredMetadata,
     topics, topic, setTopic, columns, metadataColumns: metadata_columns,
     keywords, setKeywords: throttledSetKeywords, 
     binary, setBinary, normalize, setNormalize,
-    showDecisions, setShowDecisions
+    showDecisions, setShowDecisions,
+    resetFocus, setFocus,
+    isOpen, setOpen, 
   }}>{children}</FilterContext.Provider>;
 };
 

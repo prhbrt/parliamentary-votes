@@ -6,24 +6,12 @@ import './Layout.css';
 import "../../rug-huisstijl.css"
 
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom'
 import { t } from 'i18next';
 
-
-import VideoCallIcon from '@mui/icons-material/VideoCall';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-// import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ErrorIcon from '@mui/icons-material/Error';
-
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import { useData } from "../../hooks/useData";
 
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Filters } from "./Filters";
 import DecisionsList from './DecisionsList';
 
 const colors = {
@@ -59,8 +47,12 @@ const binaryColumns = [
       "lower", "higher", "saves", "costs", "expands", "restricts",
       "improves", "worsens"];
 
-function ImpactChart({ title, impacts, normalize, binary, }) {
-    const { parties } = useData();
+const impactKeys = ["economic_cost_impact", "environment_impact", "fiscal_tag",
+  "healthcare_impact", "rights_impact","security_impact", "social_security_impact"];
+
+
+function ImpactChart({ title, id, impacts, normalize, binary, }) {
+    const { parties, setFocus } = useData();
 
     const impacts_ = binary ? Object.entries(impacts).filter(([impact, _]) => binaryColumns.includes(impact)) : Object.entries(impacts);
 
@@ -72,26 +64,27 @@ function ImpactChart({ title, impacts, normalize, binary, }) {
     ]));
 
     const series = impacts_.map(([impact, impacts_]) => ({
-        label: t(impact), stack: 'total', color: colors[impact], label_: impact,
+        label: t(impact), stack: 'total', color: colors[impact], id: impact,
         data: parties.map(party => Math.round((impacts_[party] || 0) / (factors[party]) || 1)),
-    })).sort((a, b) => order.indexOf(a.label_) > order.indexOf(b.label_) ? 1 : -1)
+    })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
 
 
-    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 8}}];
+    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
     const yAxis = [{label: normalize ? t('Votes (%)') : t('Votes'),
                     ...(normalize ? {min: 0, max: 100}: {}),
                     width: 65, }];
-                    
+
+    const barClick = (e, item) => {
+        const party = parties[item['dataIndex']];
+        const impact = item['seriesId'];
+        setFocus(id, party, impact);
+    };
     
     return <Box>
         <Typography variant="h6">{title}</Typography>
-        <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} hideLegend={true}/>
+        <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} hideLegend={true} onItemClick={barClick} />
     </Box>
 }
-
-
-const impactKeys = ["economic_cost_impact", "environment_impact", "fiscal_tag",
-  "healthcare_impact", "rights_impact","security_impact", "social_security_impact"];
 
 export function ParliamentaryVotes({}) {
     const { t } = useTranslation();
@@ -116,25 +109,23 @@ export function ParliamentaryVotes({}) {
             legendItems[color] = [t(item)]
         else
             legendItems[color].push(t(item));
-    })
-    
-
+    });
 
     return <Box sx={{p: 0, mx:'auto'}}>
         
         <Grid container width="100%">
-            <Grid size={{lg: 3, md: 4, sm: 12, xs: 12}} display="flex" flexDirection="column" className={`${!showDecisions ? "hide-sm " : ""}`}>
-                <Box mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}</Typography></Box>
-                <DecisionsList decisions={metadata}/>
+            <Grid key="decisions-box" size={{lg: 3, md: 4, sm: 12, xs: 12}} display="flex" flexDirection="column" className={`${!showDecisions ? "hide-sm " : ""}`}>
+                <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}</Typography></Box>
+                <DecisionsList key="decisions-list" decisions={metadata}/>
             </Grid>
-            <Grid container size={{lg: 9, md: 8}} className={`fill-vertically ${showDecisions ? "hide-sm " : ""}`}>
+            <Grid key="graphs-box" container size={{lg: 9, md: 8}} className={`fill-vertically ${showDecisions ? "hide-sm " : ""}`}>
                 <Grid key="legend" size={12} p={5}>
                     {Object.entries(legendItems).map(([color, items]) => {
-                        return <><Box style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: color}}/>&nbsp;{items.join("/")}&nbsp;</>
+                        return <span key={`legend-item-${items[0]}`}><Box style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: color}}/>&nbsp;{items.join("/")}&nbsp;</span>
                     })}
                 </Grid>
                 {impactKeys.map(key => <Grid key={key} size={{'xs': 12, 'sm': 12, 'md': 6, lg: 4}}>
-                    <ImpactChart title={t(key)} key={key} {...{binary: !binary, normalize: !normalize}} impacts={impacts[key]}/></Grid>)}
+                    <ImpactChart id={key} title={t(key)} key={key} {...{binary: !binary, normalize: !normalize}} impacts={impacts[key]}/></Grid>)}
             </Grid>
         </Grid>
     </Box>

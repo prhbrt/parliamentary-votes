@@ -50,8 +50,8 @@ const colors = {
 }
 
 
-export default function DecisionsList() {
-  const {metadata, metadataColumns, } = useData();
+export default function DecisionsList({}) {
+  const {metadata, metadataColumns, isOpen, } = useData();
   const {t} = useTranslation()
 
   const FAVOR_BENEFICIARIES_COLUMN = metadataColumns.indexOf("beneficiaries_of_vote_in_favor")
@@ -72,12 +72,12 @@ export default function DecisionsList() {
 
   
   return (
-    <List sx={{ width: '100%', flexGrow: 1, bgcolor: 'background.paper' }}>
+    <List sx={{ width: '100%', height: isOpen ? 'calc(100vh - 400px)' : 'calc(100vh - 100px)', flexGrow: 1, bgcolor: 'background.paper' }}>
       <Virtuoso className="decisions-virtuoso" data={metadata} itemContent={(index, decision) => {
           const impactIcons = impacts.map(impact => {
             const Icon = icons[impact];
             const color = colors[decision[IMPACT_COLUMNS[impact]]];
-            return <Icon style={{color}} title={`${t(impact)}: ${t(decision[IMPACT_COLUMNS[impact]])}`}/>
+            return <Icon key={`impact-icon-${impact}`}style={{color}} title={`${t(impact)}: ${t(decision[IMPACT_COLUMNS[impact]])}`}/>
           });
 
           return <>
