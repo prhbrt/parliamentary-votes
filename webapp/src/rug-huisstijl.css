@@ -6497,12 +6497,28 @@ footer {
         width: 100px;
         background: linear-gradient(129deg, white, white 80px, rgba(220, 0, 45, 1) 80px);
     }
+    .fill-vertically {
+        /* max-height: calc(100vh - 50px); */
+    }
+    .rug-bar { background-color: #dc002d }
 }
 
 @media (min-width: 900px) {
     .show-sm.show-sm.show-sm { display: none; }
     .slash-bg {
         width: 60px;
-        background: linear-gradient(129deg, white, white 40px, rgba(220, 0, 45, 1) 40px);
+        background: linear-gradient(129deg, rgba(220, 0, 45, 1), rgba(220, 0, 45, 1) 40px, white  40px);
     }
+    .fill-vertically {
+        max-height: calc(100vh - 50px - 2.5em);
+        overflow-y: auto;
+    }
+    .decisions-virtuoso {
+        height: calc(100vh - 50px - 2.5em - 50px);
+        overflow-y: auto;
+    }
+
+    .rug-bar { background-color: white }
 }
+
+

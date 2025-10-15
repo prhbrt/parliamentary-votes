@@ -70,7 +70,6 @@ html { overflow: auto; }
   /*margin-bottom: 50px;*/
   position: relative;
   z-index: 11;
-  background-color: #dc002d;
 }
 
 
@@ -147,7 +146,7 @@ strong {
 }
 
 .mobile-links.open {
-  height: 250px;
+  height: 300px;
 }
 
 .mobile-links.closed {

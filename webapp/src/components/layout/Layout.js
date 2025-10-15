@@ -13,13 +13,10 @@ export function Layout({children}) {
     const { t, i18n } = useTranslation();
 
     return <>
-        <Box className="no-print">
-            <Header/>
-            <div className="rug-content">
-                {children}
-                
-            </div>
-            <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}/>
-        </Box>
+        <Header/>
+        <div className="rug-content">
+            {children}
+        </div>
+        <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}/>
     </>
 }

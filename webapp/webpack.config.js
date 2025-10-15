@@ -20,6 +20,14 @@ module.exports = {
     ],
     module: {
         rules: [
+          
+            {
+              test: /data\/party_stances\.zip$/,
+              type: 'asset/resource',
+              generator: {
+                filename: 'assets/[name][ext]'
+              }
+            },
             {
               test: /\.(woff|woff2|eot|ttf|otf)$/i,
               type: 'asset/resource',

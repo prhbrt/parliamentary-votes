@@ -10,6 +10,8 @@ import Hamburger from 'hamburger-react'
 
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { Filters } from './Filters';
+import { useData } from '../../hooks/useData';
 
 
 function LanguageMenu() {
@@ -35,7 +37,7 @@ function LanguageMenu() {
 
   return (
     <>
-      <Link id="language-link" aria-controls={open ? 'language-link-menu' : undefined}
+      <Link style={{backgroundColor: '#dc002d'}} id="language-link" aria-controls={open ? 'language-link-menu' : undefined}
             aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
               {t("Language")}
       </Link>
@@ -52,6 +54,7 @@ function LanguageMenu() {
 
 function LanguageMenuSmall() {
   const { t, i18n } = useTranslation();
+  const {showDecisions, setShowDecisions} = useData();
 
   const lang = i18n.language;
   
@@ -72,6 +75,7 @@ export function Header({}) {
   const { t, i18n } = useTranslation();
   const location = useLocation()
   const [isOpen, setOpen] = useState(false)
+  const {showDecisions, setShowDecisions} = useData();
 
   var active = "questionaire";
   if (location.pathname.startsWith('/about')) active = "about";
@@ -93,17 +97,22 @@ export function Header({}) {
         <Box className="slash-bg" width={150} flexShrink={0} p={0}>
           <img className="show-sm" src={logo_only} alt="UG" style={{marginTop: '5px', height: '40px', marginLeft: '20px'}}/>
         </Box>
-        <Box flex={1} minWidth={0} p={0} gap={0}>
+        <Box flex={1} minWidth={0} p={0} gap={0} flexDirection="row-reverse" display="flex">
           <Box className="hide-sm" display="flex" flexDirection="row-reverse"><LanguageMenu/></Box>
+          <Box className="hide-sm" display="flex" flexDirection="row-reverse" flexGrow={1}><Filters/></Box>
           <Box className="show-sm" display="flex" flexDirection="row-reverse">
-            
             <Hamburger color="white" toggled={isOpen} toggle={setOpen}/>
             <Box color="white" style={{lineHeight: '50px', }} flexGrow={1}>{t('Parliamentary votes')}</Box>
           </Box>
         </Box>
       </Box>
     </div>
-    <Box  key="top-bar-menu" onClick={() => setOpen(false)} className={`show-sm mobile-links ${isOpen? 'open ' : 'closed '}`}><Box>
+    <Box key="top-bar-menu" className={`show-sm mobile-links ${isOpen? 'open ' : 'closed '}`}><Box>
+      <Box display="flex" flexDirection="row">
+        <Link className={`${showDecisions ? "active " : ""}`} key="nl" onClick={() => setShowDecisions(true)}>{t('Decisions')}</Link>
+        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => setShowDecisions(false)}>{t('Graphs')}</Link>
+      </Box>
+      <Box className="show-sm" display="flex" flexDirection="column-reverse" flexGrow={1} style={{backgroundColor: 'white'}}><Filters/></Box>
       <LanguageMenuSmall/>
     </Box></Box>
   </>);
