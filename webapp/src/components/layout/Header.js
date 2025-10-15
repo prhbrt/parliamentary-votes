@@ -54,12 +54,12 @@ function LanguageMenu() {
 
 function LanguageMenuSmall() {
   const { t, i18n } = useTranslation();
-  const {showDecisions, setShowDecisions} = useData();
+  const { setOpen } = useData();
 
   const lang = i18n.language;
   
   function setLanguage(language) {
-    return () => { i18n.changeLanguage(language) }
+    return () => { i18n.changeLanguage(language); setOpen(false) }
   }
 
   return (
@@ -113,8 +113,11 @@ export function Header({}) {
     </div>
     <Box key="top-bar-menu" className={`show-sm mobile-links ${isOpen? 'open ' : 'closed '}`}><Box>
       <Box display="flex" flexDirection="row">
-        <Link className={`${showDecisions ? "active " : ""}`} key="nl" onClick={() => setShowDecisions(true)}>{t('Decisions')}</Link>
-        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => setShowDecisions(false)}>{t('Impacts')}</Link>
+        <Link className={`${showDecisions ? "active " : ""}`} key="nl" onClick={() => {setShowDecisions(true); setOpen(false)}}>{t('Decisions')}</Link>
+        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => {setShowDecisions(false); setOpen(false)}}>{t('Impacts')}</Link>
+        <Link style={{backgroundColor: '#dc002d'}} id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
+              aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={() => { setInformationOpen(true); setOpen(false)}}>{t("Info")}
+        </Link>
       </Box>
       <Box className="show-sm" display="flex" flexDirection="column-reverse" flexGrow={1} style={{backgroundColor: 'white'}}><Filters/></Box>
       <LanguageMenuSmall/>
