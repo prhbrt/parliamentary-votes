@@ -35,11 +35,28 @@ const resources = {
       "worsens": "worsens",
       "n/a": "not applicable",
       "unclear": "unclear",
+
+      "f_lower": "lowers",
+      "f_higher": "increases",
+      "f_saves": "saves",
+      "f_costs": "costs",
+      "f_budget-neutral": "is budget-neutral on",
+      "f_expands": "increases",
+      "f_restricts": "restricts",
+      "f_neutral": "is neutral to",
+      "f_not-participated": "didn't participate in voting on",
+      "f_improves": "improves",
+      "f_worsens": "worsens",
+      "f_n/a": "doesn't affect",
+      "unclear": "is unclear whether affects",
+
       'Votes': 'Votes',
       'Votes (%)': 'Votes (%)',
       "All topics": "All topics",
       "Decisions": "Decisions",
       "Impacts": "Impacts",
+
+      "1+ <PARTY>-vote that <IMPACT> <AREA>": "with <PARTY>-votes that <IMPACT> <AREA>",
       
       "founded in 1614 - top 100 university": "founded in 1614 - top 100 university",
     }
@@ -63,6 +80,15 @@ const resources = {
       "rights_impact": "Impact op mensenrechten",
       "security_impact": "Impact on veiligheid",
       "social_security_impact": "Impact op sociale zekerheden",
+
+      "f_economic_cost_impact": "de economie",
+      "f_environment_impact": "klimaat en milieu",
+      "f_fiscal_tag": "belastingen",
+      "f_healthcare_impact": "de gezondheidszorg",
+      "f_rights_impact": "mensenrechten",
+      "f_security_impact": "de veiligheid",
+      "f_social_security_impact": "sociale zekerheden",
+
       "founded in 1614 - top 100 university": "opgericht in 1614 - top 100 universiteit",
 
       "All topics": "Alle onderwerpen",
@@ -85,11 +111,28 @@ const resources = {
       "worsens": "verslechterd",
       "n/a": "niet van toepassing",
       "unclear": "onduidelijk",
+
+      "f_lower": "verlaagt",
+      "f_higher": "verhoogt",
+      "f_saves": "bespaart",
+      "f_costs": "kost",
+      "f_budget-neutral": "budget-neutraal is",
+      "f_expands": "vergroot",
+      "f_restricts": "beperkt",
+      "f_neutral": "neutraal",
+      "f_not-participated": "niet gestemd",
+      "f_improves": "verbeteren",
+      "f_worsens": "verslechteren",
+      "f_n/a": "niet beinvloeren",
+      "unclear": "onduidelijk beinvloeden",
+
+
       'Votes': 'Stemmen',
       'Votes (%)': 'Stemmen (%)',
       "Decisions": "Besluiten",
       "Impacts": "Impacts",
 
+      "1+ <PARTY>-vote that <IMPACT> <AREA>": "met <PARTY>-stemmen die <AREA> <IMPACT>",
     }
   }
 };

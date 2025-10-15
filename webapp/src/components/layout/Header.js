@@ -74,7 +74,7 @@ function LanguageMenuSmall() {
 export function Header({}) {
   const { t, i18n } = useTranslation();
   const location = useLocation()
-  const {showDecisions, setShowDecisions, isOpen, setOpen } = useData();
+  const {showDecisions, setShowDecisions, isOpen, setOpen, informationOpen, setInformationOpen } = useData();
 
   var active = "questionaire";
   if (location.pathname.startsWith('/about')) active = "about";
@@ -97,7 +97,12 @@ export function Header({}) {
           <img className="show-sm" src={logo_only} alt="UG" style={{marginTop: '5px', height: '40px', marginLeft: '20px'}}/>
         </Box>
         <Box flex={1} minWidth={0} p={0} gap={0} flexDirection="row-reverse" display="flex">
-          <Box className="hide-sm" display="flex" flexDirection="row-reverse"><LanguageMenu/></Box>
+          <Box className="hide-sm" display="flex" flexDirection="row-reverse">
+            <LanguageMenu/>
+            <Link style={{backgroundColor: '#dc002d'}} id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
+                  aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={() => setInformationOpen(true)}>{t("Info")}
+            </Link>
+            </Box>
           <Box className="hide-sm" display="flex" flexDirection="row-reverse" flexGrow={1}><Filters/></Box>
           <Box className="show-sm" display="flex" flexDirection="row-reverse">
             <Hamburger color="white" toggled={isOpen} toggle={setOpen}/>

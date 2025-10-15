@@ -16,6 +16,7 @@ import EnvironmentIcon from '@mui/icons-material/EnergySavingsLeaf';
 import RightsIcon from '@mui/icons-material/EmojiPeople';
 import SecurityIcon from '@mui/icons-material/Security';
 import SocialSecurityIcon from '@mui/icons-material/Tag';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslation } from 'react-i18next';
 
 
@@ -67,22 +68,23 @@ export default function DecisionsList({}) {
   const TERMIJN_COLUMN = metadataColumns.indexOf("Termijn")
   const VERGADERJAAR_COLUMN = metadataColumns.indexOf("Vergaderjaar")
   const VOLGNUMMER_COLUMN = metadataColumns.indexOf("Volgnummer")
+  const MD_NUMMER_COLUMN = metadataColumns.indexOf("Nummer")
   const AFGEDANA_COLUMN = metadataColumns.indexOf("Afgedaan")
   const IMPACT_COLUMNS = Object.fromEntries(impacts.map(impact => [impact, metadataColumns.indexOf(impact)]));
 
   
   return (
-    <List sx={{ width: '100%', height: isOpen ? 'calc(100vh - 400px)' : 'calc(100vh - 100px)', flexGrow: 1, bgcolor: 'background.paper' }}>
-      <Virtuoso className="decisions-virtuoso" data={metadata} itemContent={(index, decision) => {
+    <List sx={{ width: '100%', flexGrow: 1, bgcolor: 'background.paper' }} className={`decisions-list ${isOpen? "open ": "closed "}`} >
+      <Virtuoso className={`decisions-virtuoso ${isOpen? "open ": "closed "}`} data={metadata} itemContent={(index, decision) => {
           const impactIcons = impacts.map(impact => {
             const Icon = icons[impact];
             const color = colors[decision[IMPACT_COLUMNS[impact]]];
-            return <Icon key={`impact-icon-${impact}`}style={{color}} title={`${t(impact)}: ${t(decision[IMPACT_COLUMNS[impact]])}`}/>
+            return <Icon key={`impact-icon-${impact}`}style={{color}} title={`${t(impact)}: ${t(decision[IMPACT_COLUMNS[impact]])}`} fontSize="small"/>
           });
 
           return <>
             <ListItem alignItems="flex-start">
-               <ListItemText primary={<>{impactIcons}&nbsp;{decision[TITEL_COLUMN]}</>} secondary={
+               <ListItemText primary={<>{impactIcons}&nbsp;<span style={{fontSize: '8pt'}}>{decision[TITEL_COLUMN]}</span> — {decision[ONDERWERP_COLUMN]} <a href={`https://www.tweedekamer.nl/zoeken?qry=${decision[MD_NUMMER_COLUMN]}`} target="_blank"><OpenInNewIcon fontSize="small"/></a></>} secondary={
                    <>   
                     <Typography component="span" variant="body2" sx={{ color: 'text.primary', display: 'inline' }}>
                        {decision[DECISION_COLUMN]}

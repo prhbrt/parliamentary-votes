@@ -117,10 +117,6 @@ video.result {
 }
 
 
-.rug-content {
-  min-height: calc(100vh - 240px);
-}
-
 .rug-bar a {
   color: white;
   height: 50px;

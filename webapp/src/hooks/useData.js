@@ -62,6 +62,7 @@ export function useThrottledSetter(setState, delay = 1000) {
 
 export const FilterProvider = ({ children }) => {
   const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
+  const [informationOpen, setInformationOpen] = useState(true);
 
   const [keywords, setKeywords] = useState("");
   const [binary, setBinary] = useState(false);
@@ -166,8 +167,8 @@ export const FilterProvider = ({ children }) => {
     keywords, setKeywords: throttledSetKeywords, 
     binary, setBinary, normalize, setNormalize,
     showDecisions, setShowDecisions,
-    resetFocus, setFocus,
-    isOpen, setOpen, 
+    area, party, impact, resetFocus, setFocus,
+    isOpen, setOpen, informationOpen, setInformationOpen,
   }}>{children}</FilterContext.Provider>;
 };
 

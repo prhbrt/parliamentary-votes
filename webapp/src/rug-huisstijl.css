@@ -6501,9 +6501,14 @@ footer {
         /* max-height: calc(100vh - 50px); */
     }
     .rug-bar { background-color: #dc002d }
+    /* .decisions-virtuoso.open { height: calc(100vh - 400px); overflow-y: auto; }
+    .decisions-virtuoso.closed { height: calc(100vh - 100px); overflow-y: auto; } */
+    .decisions-list.open { height: calc(100vh - 400px); overflow-y: auto; }
+    .decisions-list.closed { height: calc(100vh - 100px); overflow-y: auto; }
 }
 
 @media (min-width: 900px) {
+    .rug-content { min-height: calc(100vh - 240px); }
     .show-sm.show-sm.show-sm { display: none; }
     .slash-bg {
         width: 60px;
@@ -6513,8 +6518,8 @@ footer {
         max-height: calc(100vh - 50px - 2.5em);
         overflow-y: auto;
     }
-    .decisions-virtuoso {
-        height: calc(100vh - 50px - 2.5em - 50px);
+    .decisions-list {
+        height: calc(100vh - 100px - 2.5em);
         overflow-y: auto;
     }
 

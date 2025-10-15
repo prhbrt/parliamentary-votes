@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Box, Paper, Typography, Button, IconButton, List, ListItem } from '@mui/material';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tab, Tabs, CircularProgress } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import './Layout.css';
 import "../../rug-huisstijl.css"
@@ -13,16 +14,17 @@ import { useData } from "../../hooks/useData";
 
 import { BarChart } from '@mui/x-charts/BarChart';
 import DecisionsList from './DecisionsList';
+import Info from './Info';
 
 const colors = {
-    "lower": "#60B669",
+    "higher": "#60B669",
     "saves": "#60B669",
     "expands": "#60B669",
     "improves": "#60B669",
     "budget-neutral": "#FFDC64",
     "neutral": "#FFDC64",
     "worsens": "#dc002d",
-    "higher": "#dc002d",
+    "lower": "#dc002d",
     "costs": "#dc002d",
     "restricts": "#dc002d",
     "not-participated": "#009CEF",
@@ -31,9 +33,9 @@ const colors = {
 }
 
 const order = [
-    "lower", "saves", "expands", "improves",
+    "higher", "saves", "expands", "improves",
     "budget-neutral", "neutral",
-    "worsens", "higher", "costs", "restricts",
+    "worsens", "lower", "costs", "restricts",
     "not-participated", "n/a", "unclear",
 ];
 
@@ -52,6 +54,7 @@ const impactKeys = ["economic_cost_impact", "environment_impact", "fiscal_tag",
 
 
 function ImpactChart({ title, id, impacts, normalize, binary, }) {
+
     const { parties, setFocus } = useData();
 
     const impacts_ = binary ? Object.entries(impacts).filter(([impact, _]) => binaryColumns.includes(impact)) : Object.entries(impacts);
@@ -88,18 +91,20 @@ function ImpactChart({ title, id, impacts, normalize, binary, }) {
 
 export function ParliamentaryVotes({}) {
     const { t } = useTranslation();
-    const { loading, error, impacts, metadata, normalize, binary, showDecisions } = useData();
+    const { loading, error, impacts, metadata, normalize, binary, showDecisions, party, impact, area, resetFocus, informationOpen, setInformationOpen} = useData();
     
+    
+    const infoDialog = <Info information={informationOpen} setInformation={setInformationOpen} ></Info>;
+
     if (loading)
-        return <Box sx={{pt:3,pb:3,mx:'auto', maxWidth: '1200px'}}>
+        return <><Box sx={{pt:3,pb:3,mx:'auto', maxWidth: '1200px'}}>
             <Box display="inline-box" mx="auto" style={{marginTop: '200px', textAlign: 'center', lineHeight: '50px', verticalAlign: 'middle'}}><CircularProgress style={{lineHeight: '50px', verticalAlign: 'middle'}}/>&nbsp;{t("Loading data")}</Box>
-            
-    </Box>
+    </Box>{infoDialog}</>
 
     if (error)
-        return <Box sx={{pt:3,pb:3,mx:'auto', maxWidth: '1200px'}}>
+        return <><Box sx={{pt:3,pb:3,mx:'auto', maxWidth: '1200px'}}>
             <Box display="inline-box" style={{x: "auto"}}><ErrorIcon />&nbsp;{t(error)}</Box>
-        </Box>
+        </Box>{infoDialog}</>
 
     var legendItems = {};
     Object.entries(colors).map(([item, color]) => {
@@ -111,11 +116,16 @@ export function ParliamentaryVotes({}) {
             legendItems[color].push(t(item));
     });
 
-    return <Box sx={{p: 0, mx:'auto'}}>
+    console.log(area, party, impact);
+    const filterText = !area ? '' : ", " + t("1+ <PARTY>-vote that <IMPACT> <AREA>").replace("<AREA>", t("f_" + area)).replace("<PARTY>", party).replace("<IMPACT>", t("f_" + impact));
+
+    const closeFocus = !area ? null : <IconButton size="small" onClick={resetFocus} title={t("Clear filter")}><CloseIcon fontSize="small"/></IconButton>
+
+    return <><Box sx={{p: 0, mx:'auto'}}>
         
         <Grid container width="100%">
             <Grid key="decisions-box" size={{lg: 3, md: 4, sm: 12, xs: 12}} display="flex" flexDirection="column" className={`${!showDecisions ? "hide-sm " : ""}`}>
-                <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}</Typography></Box>
+                <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}{filterText}{closeFocus}</Typography></Box>
                 <DecisionsList key="decisions-list" decisions={metadata}/>
             </Grid>
             <Grid key="graphs-box" container size={{lg: 9, md: 8}} className={`fill-vertically ${showDecisions ? "hide-sm " : ""}`}>
@@ -128,5 +138,5 @@ export function ParliamentaryVotes({}) {
                     <ImpactChart id={key} title={t(key)} key={key} {...{binary: !binary, normalize: !normalize}} impacts={impacts[key]}/></Grid>)}
             </Grid>
         </Grid>
-    </Box>
+    </Box>{infoDialog}</>
 }
