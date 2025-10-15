@@ -53,6 +53,8 @@ const resources = {
       'Votes': 'Votes',
       'Votes (%)': 'Votes (%)',
       "All topics": "All topics",
+      "Two values": "Two Values",
+      "All values": "All values",
       "Decisions": "Decisions",
       "Impacts": "Impacts",
 
@@ -92,7 +94,8 @@ const resources = {
       "founded in 1614 - top 100 university": "opgericht in 1614 - top 100 universiteit",
 
       "All topics": "Alle onderwerpen",
-      "Two values": "Alle waarden",
+      "Two values": "Twee waarden",
+      "All values": "Alle waarden",
       "Relative": "Relatief",
       "Absolute": "Absoluut",
       "Keywords": "Zoektermen",
