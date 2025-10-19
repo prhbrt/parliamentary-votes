@@ -149,6 +149,8 @@ const resources = {
       "Realistic": "Realistisch",
       "Beneficiaries": "Begunstigden",
       "Symbolism": "Symbolische stemmen",
+      "In favor": "Voor",
+      "Against": "Tegen",
     }
   }
 };

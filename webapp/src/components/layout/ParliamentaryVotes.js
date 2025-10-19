@@ -124,7 +124,9 @@ function SymbolismChart() {
                     width: 65, }];
     
     return <Box>
-        <Typography variant="h6">{t("Symbolism")}</Typography>
+        <Typography variant="h6">{t("Symbolism")} <span key={`legend-item-Voor`}><Box style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: colors['Voor']}}/>&nbsp;{t("In favor")} </span>
+            <span key={`legend-item-Tegen`}><Box style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: colors['Tegen']}}/>&nbsp;{t("Against")}&nbsp;</span>
+        </Typography>
         <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} hideLegend={true}/>
     </Box>
 }
@@ -152,6 +154,8 @@ export function ParliamentaryVotes({}) {
     Object.entries(colors).map(([item, color]) => {
         if (!binary && !binaryColumns.includes(item))
             return
+        if (['Voor', 'Tegen', 'Niet deelgenomen'].includes(item))
+            return
         if (!legendItems[color])
             legendItems[color] = [t(item)]
         else
@@ -164,7 +168,7 @@ export function ParliamentaryVotes({}) {
 
     return <><Box sx={{p: 0, mx:'auto'}}>
         
-        <Grid container width="100%">
+        <Grid container width="100%" style={{height: 'calc(100vh - 2.5em - 100px)'}}>
             <Grid key="decisions-box" size={{lg: 3, md: 4, sm: 12, xs: 12}} display="flex" flexDirection="column" className={`${!showDecisions ? "hide-sm " : ""}`}>
                 <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}{filterText}</Typography></Box>
                 <DecisionsList key="decisions-list" decisions={metadata}/>
