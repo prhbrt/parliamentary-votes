@@ -74,7 +74,10 @@ function LanguageMenuSmall() {
 export function Header({}) {
   const { t, i18n } = useTranslation();
   const location = useLocation()
-  const {showDecisions, setShowDecisions, isOpen, setOpen, informationOpen, setInformationOpen } = useData();
+  const {
+    showDecisions, setShowDecisions, isOpen, setOpen, informationOpen, setInformationOpen,
+    setShowBeneficiaries, showBeneficiaries,
+  } = useData();
 
   var active = "questionaire";
   if (location.pathname.startsWith('/about')) active = "about";
@@ -102,6 +105,9 @@ export function Header({}) {
             <Link style={{backgroundColor: '#dc002d'}} id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
                   aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={() => setInformationOpen(true)}>{t("Info")}
             </Link>
+            <Link style={{backgroundColor: '#dc002d'}} id="beneficiaries-link"
+                  onClick={() => setShowBeneficiaries(!showBeneficiaries)}>{!showBeneficiaries ? t("Beneficiaries") : t("Impacts")}
+            </Link>
             </Box>
           <Box className="hide-sm" display="flex" flexDirection="row-reverse" flexGrow={1}><Filters/></Box>
           <Box className="show-sm" display="flex" flexDirection="row-reverse">
@@ -114,8 +120,11 @@ export function Header({}) {
     <Box key="top-bar-menu" className={`show-sm mobile-links ${isOpen? 'open ' : 'closed '}`}><Box>
       <Box display="flex" flexDirection="row">
         <Link className={`${showDecisions ? "active " : ""}`} key="nl" onClick={() => {setShowDecisions(true); setOpen(false)}}>{t('Decisions')}</Link>
-        <Link className={`${!showDecisions ? "active " : ""}`} key="en" onClick={() => {setShowDecisions(false); setOpen(false)}}>{t('Impacts')}</Link>
-        <Link style={{backgroundColor: '#dc002d'}} id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
+        <Link className={`${!showDecisions && !showBeneficiaries ? "active " : ""}`} key="en" onClick={() => {setShowDecisions(false); setShowBeneficiaries(false); setOpen(false)}}>{t('Impacts')}</Link>
+        <Link className={`${!showDecisions && showBeneficiaries ? "active " : ""}`} id="beneficiaries-link"
+              onClick={() => {setShowDecisions(false); setShowBeneficiaries(true); setOpen(false)}}>{t("Beneficiaries")}</Link>
+
+        <Link id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
               aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={() => { setInformationOpen(true); setOpen(false)}}>{t("Info")}
         </Link>
       </Box>

@@ -61,6 +61,12 @@ const resources = {
       "1+ <PARTY>-vote that <IMPACT> <AREA>": "with <PARTY>-votes that <IMPACT> <AREA>",
       
       "founded in 1614 - top 100 university": "founded in 1614 - top 100 university",
+
+      "Only with financial backing": "Only with fin. backing",
+      "Symbolic": "Symbolic",
+      "Neutral": "Neutral",
+      "Realistic": "Realistics",
+      "Beneficiaries": "Beneficiaries",
     }
   },
   nl: {
@@ -136,6 +142,13 @@ const resources = {
       "Impacts": "Impacts",
 
       "1+ <PARTY>-vote that <IMPACT> <AREA>": "met <PARTY>-stemmen die <AREA> <IMPACT>",
+      "Only with financial backing": "Met financiën",
+      "All": "Alles",
+      "Symbolic": "Symbolisch",
+      "Neutral": "Neutraal",
+      "Realistic": "Realistisch",
+      "Beneficiaries": "Begunstigden",
+      "Symbolism": "Symbolische stemmen",
     }
   }
 };
