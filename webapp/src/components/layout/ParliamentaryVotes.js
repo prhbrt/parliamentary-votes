@@ -168,7 +168,7 @@ export function ParliamentaryVotes({}) {
 
     return <><Box sx={{p: 0, mx:'auto'}}>
         
-        <Grid container width="100%" style={{height: 'calc(100vh - 2.5em - 100px)'}}>
+        <Grid container width="100%">
             <Grid key="decisions-box" size={{lg: 3, md: 4, sm: 12, xs: 12}} display="flex" flexDirection="column" className={`${!showDecisions ? "hide-sm " : ""}`}>
                 <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}{filterText}</Typography></Box>
                 <DecisionsList key="decisions-list" decisions={metadata}/>
