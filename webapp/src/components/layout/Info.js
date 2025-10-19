@@ -55,9 +55,33 @@ function Info({ information, setInformation }) {
                     <h2>About Parliamentary Votes Analysis</h2>
                     <p>This website provides an interactive analysis of parliamentary voting patterns in the Dutch House of Representatives (Tweede Kamer). It visualizes how different political parties have voted on various motions and decisions, categorized by topics and impacts.</p>
                     <p>The analysis covers parliamentary decisions from December 2023 onwards, focusing on motions that were voted on. Each decision is analyzed using AI to determine its topic, potential impacts, and beneficiaries.</p>
+
+                    <h2>How it works</h2>
+                    <p>
+                        Since the impact of a vote is more relevant than the raw vote, the AI has assigned impacts to all decisions based on the document text for <strong>both a favorable or against vote</strong>.
+                        For each decision and each party, the impact is based on what they voted, or more accurately, how many seats voted in favor or against.
+                        
+                        For example, if GroenLinks-PvdA voted with 25 seats in favor or a motion to illigalize the use of PFAS, and then voted against a motion to
+                        enforce that supermarkets always provide a plastic bag for free, their environmental impact of these two votes 50 seats for `improves`.
+                        Because they voted 25 seats in favor of something that would improve the environment and 25 seats against something that would worsen the environment.
+                    </p>
+                    <h2>What are beneficiaries</h2>
+                    <p>
+                        The AI also determined beneficiaries for each decision, i.e., who benefits from voting in favor or against the motion. They are also correlated
+                        by seats that voted in their benefits for each party. These seat-votes are shown as a table, and you can normalize them w.r.t. the number of seats
+                        a party has. This is a free-form text field the AI could use, hence there are many of them.
+                    </p>
+                    <h2>Why is this website slow?</h2>
+                    <p>
+                        All the data is loaded onto your phone or computer, and filtered there. This means that the initial load can take some time, especially on slower
+                        connections or devices, and each filter change requires some computation. This way we avoid server costs and security and privacy
+                        issues by not having a backend server, such that we have more attention and resources left for research.
+                    </p>
+                    
                     <h2>About the Dutch Parliament</h2>
                     <p>The Netherlands is a parliamentary democracy. The parliament is called the Staten-Generaal and consists of two chambers: the House of Representatives (Tweede Kamer) and the Senate (Eerste Kamer). The House of Representatives has 150 members elected directly by Dutch citizens through proportional representation.</p>
-                    <p><a href="https://www.tweedekamer.nl/zo-werkt-de-kamer" target="_blank" rel="noreferrer">More information about the Dutch parliament</a></p>
+                    <p><a href="https://www.tweedekamer.nl/zo-werkt-de-kamer" target="_blank" rel="noreferrer">More information about the Dutch parliament</a>. This data consists only of decisions made
+                    by the House of Representatives.</p>
                     <h2>Data Sources</h2>
                     <p>The voting data is sourced from the official Dutch parliament's open data API (<a href="https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/" target="_blank" rel="noreferrer">Tweede Kamer Gegevensmagazijn</a>). Document texts are retrieved from <a href="https://zoek.officielebekendmakingen.nl/" target="_blank" rel="noreferrer">Officiële Bekendmakingen</a>.</p>
                     <h2>Credits</h2>
@@ -93,7 +117,7 @@ function Info({ information, setInformation }) {
                     </ul>
                     <h2>Beneficiaries</h2>
                     <p>For both in favour and against votes, there are beneficiaries. They are only accessible on a wide computer screen.
-                        These mostly make sense when showing relative numbers, in this case they are devided bu the number of seats in parlement.
+                        These mostly make sense when showing relative numbers, in this case they are divided by the number of seats in parlement.
                         This is relevant, because a beneficiary is counted for each vote, since a party might not vote uniformly.
                     </p>
 
@@ -124,6 +148,13 @@ function Info({ information, setInformation }) {
                         <li>Only include decisions modified after December 6, 2023</li>
                         <li>Document text length longer than 15,000 characters excluded (limit of the AI)</li>
                     </ul>
+                    <p>Around 500 decisions were lost, mostly because their document texts were too long for the LLM to process, but also because
+                       the ODATA API or officielebekendmakingen sometimes gave HTTP 404 responses.</p>
+                    <p>We retrieved decisions from December 6th 2023 onwards, yet could not ensure all decisions were made by the parliament related to `Schoof I`, some
+                       of the votes after December 6th 2023 were from the previous parlement. This is probably because the decisions were modified later. Therefore we
+                       removed decisions with votes from Groenlinks and PvdA, since these parties aren't in parlement (seperately) anymore. However, some decisions might
+                       be missing as well, althoug it would be weird that they were created before December 6th but voted for by this parlement.
+                    </p>
                     <h2>AI Processing</h2>
                     <p>Document texts are analyzed using a Large Language Model (Mistral-Small-3.2-24B-Instruct) hosted at the University of Groningen's HPC facility. The AI categorizes each decision by:</p>
                     <ul>

@@ -16,7 +16,6 @@ import { useData } from "../../hooks/useData";
 import { BarChart } from '@mui/x-charts/BarChart';
 import DecisionsList from './DecisionsList';
 import Info from './Info';
-import colormap from 'colormap';
 import tinygradient from 'tinygradient';
 
 window.tinygradient = tinygradient;
@@ -102,6 +101,9 @@ function SymbolismChart() {
     const { symbolism, parties, normalize, binary } = useData();
 
     const order = ['Voor', 'Tegen', 'Onthouden', 'Niet gestemd'];
+    if (!('symbolic' in symbolism))
+        return <p>{t("No symbolic votes.")}</p>;
+
     const symbolic = symbolism['symbolic'];
     const symbolic_ = !binary ? Object.entries(symbolic).filter(([vote, _]) => binaryColumns.includes(vote)) : Object.entries(symbolic);
 
@@ -167,21 +169,21 @@ export function ParliamentaryVotes({}) {
                 <Box key="n-decisions" mt={2}><Typography variant="h6">{metadata.length} {t('decisions')}{filterText}</Typography></Box>
                 <DecisionsList key="decisions-list" decisions={metadata}/>
             </Grid>
-            <Grid key="graphs-box" container size={{lg: 9, md: 8}} className={`fill-vertically ${showDecisions ? "hide-sm " : ""}`}>
-                <Grid key="legend" size={12} p={5}>
+            <Grid key="graphs-box" container size={{lg: 9, md: 8}} className={`fill-vertically sm-full-width ${showDecisions ? "hide-sm " : ""}`}>
+                {!showBeneficiaries ? <Grid key="legend" size={12} p={5}>
                     {Object.entries(legendItems).map(([color, items]) => {
                         return <span key={`legend-item-${items[0]}`}><Box style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: color}}/>&nbsp;{items.join("/")}&nbsp;</span>
                     })}
-                </Grid>
+                </Grid> : undefined}
                 {area ? <Grid key="area-filter" size={12} p={2} className="show-sm">{filterText}</Grid>: undefined}
                 
                 {!showBeneficiaries ? impactKeys.map(key => <Grid key={key} size={{'xs': 12, 'sm': 12, 'md': 6, lg: 4}}>
                     <ImpactChart id={key} title={t(key)} key={key} {...{binary: !binary, normalize: !normalize}} impacts={impacts[key]}/></Grid>) :
-                    <Grid key="beneficiaries" size={12} p={2}>
-                            <TableVirtuoso style={{height: 'calc(100vh - 2.5em - 250px)'}} className={`beneficiaries-virtuoso`}  data={all_beneficiaries}
+                    <Grid key="beneficiaries" size={12} p={0}>
+                            <TableVirtuoso style={{height: 'calc(100vh - 2.5em - 100px)', width: '100%', borderSpacing: '1px', borderCollapse: 'separate'}} className={`beneficiaries-virtuoso`}  data={all_beneficiaries}
                             fixedHeaderContent={() => (
-                                <tr style={{backgroundColor: '#f0f0f0'}}>
-                                <th style={{ width: 250, }}><TextField key="filter-beneficiaries" style={{ flexGrow: 1}} id="filter-beneficiaries" label={t("Filter")} placeholder={t("KeyFilterwords")} variant="standard" onChange={e => setFilterBeneficiaries(e.target.value)}/></th>
+                                <tr style={{ background: 'white'}}>
+                                <th style={{ width: 250, position: 'sticky', left: 0}}><TextField key="filter-beneficiaries" style={{ flexGrow: 1}} id="filter-beneficiaries" label={t("Filter")} placeholder={t("KeyFilterwords")} variant="standard" onChange={e => setFilterBeneficiaries(e.target.value)}/></th>
                                 {parties.map(party => <th key={`${party}-header`} style={{width: '150px'}}>{party}</th>)}
                                 </tr>
                             )}
@@ -193,7 +195,7 @@ export function ParliamentaryVotes({}) {
                                 ]).rgb(maxValue + 1).map(color => color.setAlpha(0.75).toRgbString());
                                 
                                 return <>
-                                    <th key="beneficiary" style={{textAlign: 'right', paddingRight: '5px'}}>{beneficiary}</th>
+                                    <th key="beneficiary" style={{textAlign: 'right', paddingRight: '5px', position: 'sticky', left: 0, background: 'white'}}>{beneficiary}</th>
                                     {parties.map(party => {
                                         const number = beneficiaries[party][beneficiary];
                                         return <td key={party} style={{textAlign: 'right', paddingRight: '5px', backgroundColor: colors[number], color: 'white'}}>{(new Intl.NumberFormat().format(number)).split(',').map(x => <>&nbsp;{x}</>)}</td>

@@ -78,57 +78,14 @@ export function useThrottledSetter(setState, delay = 1000) {
   return throttledSetState;
 }
 
-export const FilterProvider = ({ children }) => {
-  const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
-  const [informationOpen, setInformationOpen] = useState(true);
 
-  const [keywords, setKeywords] = useState("");
-  const [binary, setBinary] = useState(false);
-  const [normalize, setNormalize] = useState(false);
 
-  const [backed, setBacked] = useState(false);
-  const [neutral, setNeutral] = useState(true);
-  const [symbolic, setSymbolic] = useState(true);
-  const [realistic, setRealistic] = useState(true);
-
-  const [showDecisions, setShowDecisions] = useState(false);
-  const [showBeneficiaries, setShowBeneficiaries] = useState(false);
-  const [filterBeneficiaries, setFilterBeneficiaries] = useState("");
-  const [topic, setTopic] = useState("all");
-  const [allData, setData] = useState({data: [], metadata: [], metadata_columns: [], columns: []});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [area, setArea] = useState(null);
-  const [party, setParty] = useState(null);
-  const [impact, setImpact] = useState(null);
-
-  const throttledSetKeywords = useThrottledSetter(setKeywords, 1000);
-  const throttledSetFilterBeneficiaries = useThrottledSetter(setFilterBeneficiaries, 1000);
-  const { data, metadata, metadata_columns, columns } = allData;
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const response = await fetch(dataFile);
-        const arrayBuffer = await response.arrayBuffer();
-        const zip = await JSZip.loadAsync(arrayBuffer);
-        const jsonFile = zip.file('party_stances.json');
-        if (jsonFile) {
-          const jsonContent = await jsonFile.async('text');
-          window.data = JSON.parse(jsonContent);
-          setData(JSON.parse(jsonContent));
-        } else {
-          setError(f("Couldn't get data") + ".")
-        }
-        setLoading(false);
-      } catch (e) {
-        setError(f("Couldn't get data") + ": " + e )
-      }
-    };
-    loadData();
-  }, []);
-  
+function runFilters(data, metadata, metadata_columns, columns,
+    topic, keywords, binary, normalize,
+    backed, neutral, symbolic, realistic,
+    area, party, impact,
+    filterBeneficiaries
+  ) {
   const MD_NUMBER_COLUMN = data ? metadata_columns.indexOf('Nummer') : -1;
   const NUMBER_COLUMN = data ? columns.indexOf('Nummer') : -1;
   const PARTY_COLUMN = data ? columns.indexOf('party') : -1;
@@ -155,7 +112,7 @@ export const FilterProvider = ({ children }) => {
   if (neutral) purposes.push("mixed/transitional");
   if (realistic) purposes.push("realistic");
   
-    if (purposes.length > 0 && purposes.length < 3)
+  if (purposes.length > 0 && purposes.length < 3)
     filteredMetadata = filteredMetadata.filter(metadata => purposes.includes(metadata[MD_PURPOSE_COLUMN]));
 
   if (backed)
@@ -177,18 +134,22 @@ export const FilterProvider = ({ children }) => {
     )})
   }
 
-  const numbers = new Set(filteredMetadata.map(md => md[MD_NUMBER_COLUMN]));
-  
-  filteredData = filteredData.filter(sample => {
-    return numbers.has(sample[NUMBER_COLUMN]);
-  });
-
   if (area) {
     const nummers = filteredData.filter(sample => sample[AREA_COLUMN] === impact && sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0).map(sample => sample[NUMMER_COLUMN]);
     filteredMetadata = filteredMetadata.filter(metadata => {
       return nummers.includes(metadata[MD_NUMMER_COLUMN]);
     })
   }
+
+  const numbers = new Set(filteredMetadata.map(md => md[MD_NUMBER_COLUMN])).intersection(new Set(filteredData.map(d => d[NUMBER_COLUMN])));
+  
+  filteredData = filteredData.filter(sample => {
+    return numbers.has(sample[NUMBER_COLUMN]);
+  });
+
+  filteredMetadata = filteredMetadata.filter(sample => {
+    return numbers.has(sample[MD_NUMBER_COLUMN]);
+  });
 
   const impacts = getImpactSummaries(filteredData, columns);
   const parties = data ? Array.from(new Set(data.map(x => x[PARTY_COLUMN]))) : [];
@@ -241,7 +202,74 @@ export const FilterProvider = ({ children }) => {
       const vote = impact[VOTE_COLUMN];
       symbolism[nummer_to_purpose[nummer]][vote][party] += count;
   });
+
+  return { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism };
+}
+
+export const FilterProvider = ({ children }) => {
+  const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
+  const [informationOpen, setInformationOpen] = useState(true);
+
+  const [keywords, setKeywords] = useState("");
+  const [binary, setBinary] = useState(false);
+  const [normalize, setNormalize] = useState(false);
+
+  const [backed, setBacked] = useState(false);
+  const [neutral, setNeutral] = useState(true);
+  const [symbolic, setSymbolic] = useState(true);
+  const [realistic, setRealistic] = useState(true);
+
+  const [showDecisions, setShowDecisions] = useState(false);
+  const [showBeneficiaries, setShowBeneficiaries] = useState(false);
+  const [filterBeneficiaries, setFilterBeneficiaries] = useState("");
+  const [topic, setTopic] = useState("all");
+  const [allData, setData] = useState({data: [], metadata: [], metadata_columns: [], columns: []});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [area, setArea] = useState(null);
+  const [party, setParty] = useState(null);
+  const [impact, setImpact] = useState(null);
+
+  const throttledSetKeywords = useThrottledSetter(setKeywords, 1000);
+  const throttledSetFilterBeneficiaries = useThrottledSetter(setFilterBeneficiaries, 1000);
+  const { data, metadata, metadata_columns, columns } = allData;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const response = await fetch(dataFile);
+        const arrayBuffer = await response.arrayBuffer();
+        const zip = await JSZip.loadAsync(arrayBuffer);
+        const jsonFile = zip.file('party_stances.json');
+        if (jsonFile) {
+          const jsonContent = await jsonFile.async('text');
+          window.data = JSON.parse(jsonContent);
+          setData(JSON.parse(jsonContent));
+        } else {
+          setError(f("Couldn't get data") + ".")
+        }
+        setLoading(false);
+      } catch (e) {
+        setError(f("Couldn't get data") + ": " + e )
+      }
+    };
+    loadData();
+  }, []);
   
+  const { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism } = React.useMemo(() => {
+    return runFilters(data, metadata, metadata_columns, columns,
+      topic, keywords, binary, normalize,
+      backed, neutral, symbolic, realistic,
+      area, party, impact,
+      filterBeneficiaries
+    );
+  }, [data, metadata, metadata_columns, columns,
+      topic, keywords, binary, normalize,
+      backed, neutral, symbolic, realistic,
+      area, party, impact,
+      filterBeneficiaries
+    ]);
   
   
   function reset() {

@@ -6505,6 +6505,9 @@ footer {
     .decisions-virtuoso.closed { height: calc(100vh - 100px); overflow-y: auto; } */
     .decisions-list.open { height: calc(100vh - 400px); overflow-y: auto; }
     .decisions-list.closed { height: calc(100vh - 100px); overflow-y: auto; }
+    .sm-full-width {
+        width: 100% !important;
+    }
 }
 
 @media (min-width: 900px) {

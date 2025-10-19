@@ -127,7 +127,7 @@ video.result {
   padding: 0 20px;
 }
 .rug-bar a:hover, .rug-bar a.active.active, .mobile-links a.active.active {
-  background: white; color: #dc002d;
+  background: white !important; color: #dc002d;
 }
 
 
@@ -142,7 +142,7 @@ strong {
 }
 
 .mobile-links.open {
-  height: 400px;
+  height: 350px;
 }
 
 .mobile-links.closed {
@@ -178,3 +178,9 @@ strong {
 .language-item.active {
   font-weight: 800;
 }
+
+.beneficiaries-virtuoso table {
+  border-collapse: separate; border-spacing: 1px !important;
+}
+
+html {overflow:hidden !important;}
