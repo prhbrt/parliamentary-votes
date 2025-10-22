@@ -37,269 +37,443 @@ function Info({ information, setInformation }) {
             <DialogContent>
                 <AppBar position="static">
                     <Tabs value={informationTab} onChange={(_, i) => setInformationTab(i)} indicatorColor="secondary" textColor="inherit" variant="fullWidth" aria-label="full width tabs example">
-                        <Tab label="About"/>
-                        <Tab label="Methodology"/>
-                        <Tab label="Data & AI Processing"/>
-                        <Tab label="Nerdy Stuff"/>
+                        <Tab label="Over"/>
+                        <Tab label="Methodologie"/>
+                        <Tab label="Data & AI-Verwerking"/>
+                        <Tab label="Technische Informatie"/>
                     </Tabs>
                 </AppBar>
                 <TabPanel value={informationTab} index={0}>
 
-    <Alert severity="warning" icon={<WarningAmberIcon fontSize="inherit" />}sx={{
+    <Alert severity="warning" icon={<WarningAmberIcon fontSize="inherit" />} sx={{
         borderRadius: 2, boxShadow: 2, bgcolor: "warning.light", color: "black", mb: 2, }}>
-      <AlertTitle>AI was used to analyze data.</AlertTitle>
-      The decisions have been <strong>analyzed by artificial intelligence</strong>.
-      Although we tried to ensure accuracy, some analyses may be incorrect.
-      Please be aware that some statistics and information shown may be inaccurate or incorrect.</Alert>
+      <AlertTitle>AI is gebruikt om data te analyseren.</AlertTitle>
+      De beslissingen zijn <strong>geanalyseerd door kunstmatige intelligentie</strong>.
+      Hoewel we hebben geprobeerd de nauwkeurigheid te waarborgen, kunnen sommige analyses onjuist zijn.
+      Houd er rekening mee dat sommige getoonde statistieken en informatie onnauwkeurig of foutief kunnen zijn.</Alert>
 
-                    <h2>About Parliamentary Votes Analysis</h2>
-                    <p>This website provides an interactive analysis of parliamentary voting patterns in the Dutch House of Representatives (Tweede Kamer). It visualizes how different political parties have voted on various motions and decisions, categorized by topics and impacts.</p>
-                    <p>The analysis covers parliamentary decisions from December 2023 onwards, focusing on motions that were voted on. Each decision is analyzed using AI to determine its topic, potential impacts, and beneficiaries.</p>
+                    <h2>Over de Analyse van Parlementaire Stemmingen</h2>
+                    <p>Deze website biedt een interactieve analyse van stemgedrag in de Tweede Kamer. Het visualiseert hoe verschillende politieke partijen hebben gestemd over moties en besluiten, gecategoriseerd op onderwerp en impact.</p>
+                    <p>De analyse bestrijkt parlementaire besluiten vanaf december 2023, met de nadruk op moties waarover is gestemd. Elk besluit is door AI geanalyseerd om het onderwerp, de mogelijke impact en de begunstigden te bepalen.</p>
 
-                    <h2>How it works</h2>
+                    <h2>Hoe het werkt</h2>
                     <p>
-                        Since the impact of a vote is more relevant than the raw vote, the AI has assigned impacts to all decisions based on the document text for <strong>both a favorable or against vote</strong>.
-                        For each decision and each party, the impact is based on what they voted, or more accurately, how many seats voted in favor or against.
+                        Omdat de impact van een stemming relevanter is dan de ruwe stem, heeft de AI impacts toegewezen aan alle besluiten op basis van de documenttekst voor <strong>zowel een stem voor als tegen</strong>.
+                        Voor elk besluit en elke partij is de impact gebaseerd op hoe er gestemd is — of nauwkeuriger: hoeveel zetels voor of tegen stemden.
                         
-                        For example, if GroenLinks-PvdA voted with 25 seats in favor or a motion to illigalize the use of PFAS, and then voted against a motion to
-                        enforce that supermarkets always provide a plastic bag for free, their environmental impact of these two votes 50 seats for `improves`.
-                        Because they voted 25 seats in favor of something that would improve the environment and 25 seats against something that would worsen the environment.
+                        Bijvoorbeeld: als GroenLinks-PvdA met 25 zetels vóór een motie stemde om het gebruik van PFAS te verbieden, en vervolgens tegen een motie om supermarkten te verplichten altijd gratis plastic zakjes te geven, dan is hun milieu-impact van deze twee stemmen 50 zetels ‘verbeterend’. 
+                        Omdat ze 25 zetels vóór iets stemden dat het milieu zou verbeteren en 25 zetels tegen iets dat het milieu zou verslechteren.
                     </p>
-                    <h2>What are beneficiaries</h2>
+
+                    <h2>Wat zijn begunstigden?</h2>
                     <p>
-                        The AI also determined beneficiaries for each decision, i.e., who benefits from voting in favor or against the motion. They are also correlated
-                        by seats that voted in their benefits for each party. These seat-votes are shown as a table, and you can normalize them w.r.t. the number of seats
-                        a party has. This is a free-form text field the AI could use, hence there are many of them.
+                        De AI heeft ook begunstigden bepaald voor elk besluit — dus wie profiteert van een stem vóór of tegen de motie. Ze worden gecorreleerd met de zetels die in hun voordeel stemden per partij. Deze zetelstemmen worden als tabel weergegeven, en je kunt ze normaliseren ten opzichte van het aantal zetels dat een partij heeft. Dit is een vrij-tekstveld dat de AI gebruikt heeft, dus er zijn er veel.
                     </p>
-                    <h2>Why is this website slow?</h2>
+
+                    <h2>Waarom is deze website traag?</h2>
                     <p>
-                        All the data is loaded onto your phone or computer, and filtered there. This means that the initial load can take some time, especially on slower
-                        connections or devices, and each filter change requires some computation. This way we avoid server costs and security and privacy
-                        issues by not having a backend server, such that we have more attention and resources left for research.
+                        Alle data wordt lokaal op je telefoon of computer geladen en daar gefilterd. Dat betekent dat het eerste laden wat tijd kan kosten, vooral op tragere verbindingen of apparaten. Elke filteraanpassing vraagt wat rekenwerk.
+                        Op deze manier vermijden we serverkosten en privacyproblemen doordat er geen backendserver is, waardoor we meer aandacht en middelen kunnen besteden aan onderzoek.
                     </p>
                     
-                    <h2>About the Dutch Parliament</h2>
-                    <p>The Netherlands is a parliamentary democracy. The parliament is called the Staten-Generaal and consists of two chambers: the House of Representatives (Tweede Kamer) and the Senate (Eerste Kamer). The House of Representatives has 150 members elected directly by Dutch citizens through proportional representation.</p>
-                    <p><a href="https://www.tweedekamer.nl/zo-werkt-de-kamer" target="_blank" rel="noreferrer">More information about the Dutch parliament</a>. This data consists only of decisions made
-                    by the House of Representatives.</p>
-                    <h2>Data Sources</h2>
-                    <p>The voting data is sourced from the official Dutch parliament's open data API (<a href="https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/" target="_blank" rel="noreferrer">Tweede Kamer Gegevensmagazijn</a>). Document texts are retrieved from <a href="https://zoek.officielebekendmakingen.nl/" target="_blank" rel="noreferrer">Officiële Bekendmakingen</a>.</p>
+                    <h2>Over het Nederlandse Parlement</h2>
+                    <p>Nederland is een parlementaire democratie. Het parlement heet de Staten-Generaal en bestaat uit twee kamers: de Tweede Kamer en de Eerste Kamer. De Tweede Kamer heeft 150 leden die rechtstreeks gekozen worden door Nederlandse burgers via evenredige vertegenwoordiging.</p>
+                    <p><a href="https://www.tweedekamer.nl/zo-werkt-de-kamer" target="_blank" rel="noreferrer">Meer informatie over het Nederlandse parlement</a>. Deze data bevat alleen besluiten van de Tweede Kamer.</p>
+
+                    <h2>Databronnen</h2>
+                    <p>De stemdata is afkomstig uit de officiële open data-API van de Tweede Kamer (<a href="https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/" target="_blank" rel="noreferrer">Tweede Kamer Gegevensmagazijn</a>). Documentteksten zijn afkomstig van <a href="https://zoek.officielebekendmakingen.nl/" target="_blank" rel="noreferrer">Officiële Bekendmakingen</a>.</p>
+
                     <h2>Credits</h2>
-                    <p>This project is developed by researchers at the University of Groningen, including Herbert Kruitbosch and others from the Center for Information Technology.</p>
+                    <p>Dit project is ontwikkeld door onderzoekers van de Rijksuniversiteit Groningen, waaronder Herbert Kruitbosch en anderen van het Centrum voor Informatietechnologie.</p>
+
                     <h2>Contact</h2>
-                    <p>For questions and comments, please contact the development team at the University of Groningen.</p>
+                    <p>Voor vragen en opmerkingen kunt u contact opnemen met het ontwikkelteam van de Rijksuniversiteit Groningen.</p>
                 </TabPanel>
+
                 <TabPanel value={informationTab} index={1}>
-                    <h2>How to Use This Tool</h2>
-                    <p>On the right side of the screen, you can customize the visualization by selecting topics, parties, and impact categories. Use the filters to narrow down the decisions and see voting patterns.</p>
-                    <p>The left panel shows the list of parliamentary decisions. Click on any decision to see detailed voting information and analysis.</p>
-                    <h2>Data Categories</h2>
-                    <p>Each parliamentary decision is categorized by topic and analyzed for various impacts:</p>
+                    <h2>Hoe gebruik je deze tool</h2>
+                    <p>Aan de rechterkant van het scherm kun je de visualisatie aanpassen door onderwerpen, partijen en impactcategorieën te selecteren. Gebruik de filters om besluiten te verfijnen en stemgedrag te bekijken.</p>
+                    <p>Het linkerpaneel toont de lijst met parlementaire besluiten. Klik op een besluit om gedetailleerde steminformatie en analyse te zien.</p>
+
+                    <h2>Datacategorieën</h2>
+                    <p>Elk parlementair besluit is gecategoriseerd op onderwerp en geanalyseerd op verschillende impacts:</p>
                     <ul>
-                        <li><strong>Topics:</strong> Immigration, environment, healthcare, economy, etc.</li>
-                        <li><strong>Impacts:</strong> Economic costs, environmental effects, social security, rights, security, healthcare, and fiscal implications.</li>
-                        <li><strong>Beneficiaries:</strong> Who benefits from voting in favor or against the motion.</li>
+                        <li><strong>Onderwerpen:</strong> Immigratie, milieu, gezondheidszorg, economie, enz.</li>
+                        <li><strong>Impacts:</strong> Economische kosten, milieueffecten, sociale zekerheid, rechten, veiligheid, gezondheidszorg en fiscale gevolgen.</li>
+                        <li><strong>Begunstigden:</strong> Wie profiteert van een stem vóór of tegen de motie.</li>
                     </ul>
-                    <h2>Voting Analysis</h2>
-                    <p>The analysis shows how each party voted on motions, weighted by the number of seats they hold. This provides insight into party positions on various issues.</p>
-                    <h2>Decision Types</h2>
-                    <p>The data includes various types of parliamentary decisions such as motions, amendments, and other voting matters from December 2023 onwards.</p>
+
+                    <h2>Stemanalyse</h2>
+                    <p>De analyse toont hoe elke partij heeft gestemd, gewogen naar het aantal zetels dat ze hebben. Dit geeft inzicht in partijposities over verschillende onderwerpen.</p>
+
+                    <h2>Besluittype</h2>
+                    <p>De data bevat verschillende soorten parlementaire besluiten zoals moties, amendementen en andere stemonderwerpen vanaf december 2023.</p>
+
                     <h2>Impacts</h2>
-                    <p>These impacts were analysed, colored icons represent the impact of a favorable vote.</p>
+                    <p>O.a. deze impacts zijn bepaald, bekijk het annotatieschema in de laatste tab voor alle impacts. Of sluit gewoon dit venster om naar de data te gaan.</p>
                     <ul>
-                        <li><HealthIcon fontSize='small'/> healthcare impact</li>
-                        <li><EconomyIcon fontSize='small'/> economy impact</li>
-                        <li><TaxIcon fontSize='small'/> fiscal impact</li>
-                        <li><EnvironmentIcon fontSize='small'/> environmental impact</li>
-                        <li><RightsIcon fontSize='small'/> human rights impact</li>
-                        <li><SecurityIcon fontSize='small'/> security impact</li>
-                        <li><SocialSecurityIcon fontSize='small'/> social security impact</li>
+                        <li><HealthIcon fontSize='small'/> impact op gezondheidszorg</li>
+                        <li><EconomyIcon fontSize='small'/> economische impact</li>
+                        <li><TaxIcon fontSize='small'/> fiscale impact</li>
+                        <li><EnvironmentIcon fontSize='small'/> milieu-impact</li>
+                        <li><RightsIcon fontSize='small'/> impact op mensenrechten</li>
+                        <li><SecurityIcon fontSize='small'/> veiligheidsimpact</li>
+                        <li><SocialSecurityIcon fontSize='small'/> impact op sociale zekerheid</li>
                     </ul>
-                    <h2>Beneficiaries</h2>
-                    <p>For both in favour and against votes, there are beneficiaries. They are only accessible on a wide computer screen.
-                        These mostly make sense when showing relative numbers, in this case they are divided by the number of seats in parlement.
-                        This is relevant, because a beneficiary is counted for each vote, since a party might not vote uniformly.
+
+                    <h2>Begunstigden</h2>
+                    <p>Zowel bij stemmen vóór als tegen zijn er begunstigden. Deze zijn alleen zichtbaar op brede computerschermen.
+                        Ze hebben vooral zin wanneer relatieve aantallen worden getoond, waarbij ze gedeeld worden door het aantal zetels in het parlement.
+                        Dit is relevant omdat een begunstigde per stem wordt geteld, aangezien een partij niet altijd unaniem stemt.
                     </p>
 
-                    <h2>Realism and finances</h2>
-                    <p>Each decision is also evaluated on its realism-symbolism purpose and whether it includes a cost strategy.</p>
+                    <h2>Realisme en financiën</h2>
+                    <p>Elk besluit wordt ook beoordeeld op realisme-symboliek en of het een financiële strategie bevat.</p>
                     <ul>
-                        <li><strong>realistic</strong> procedural accuracy and plausible politics, e.g. budget changes, new laws, sanctions</li>
-                        <li><strong>neutral</strong> both realistic and symbolic</li>
-                        <li><strong>symbolic</strong> allegory, e.g. condemn a war or conflict.</li>
+                        <li><strong>realistisch:</strong> procedurele nauwkeurigheid en plausibele politiek, bijv. begrotingswijzigingen, nieuwe wetten, sancties</li>
+                        <li><strong>neutraal:</strong> zowel realistisch als symbolisch</li>
+                        <li><strong>symbolisch:</strong> allegorisch, bijv. het veroordelen van een oorlog of conflict</li>
                     </ul>
-                    <p>Some deicisions lack this annotation. Furthermore, if the decision is about spending more money, does it also
-                        include where the money should come from? You can choose to only show decisions with a financial backing.</p>
+                    <p>Sommige besluiten missen deze annotatie. Bovendien, als het besluit meer geld uitgeeft, is dan ook aangegeven waar dat geld vandaan moet komen? Je kunt ervoor kiezen alleen besluiten met financiële onderbouwing te tonen.</p>
                 </TabPanel>
+
                 <TabPanel value={informationTab} index={2}>
-                    <h2>Data Gathering and Processing</h2>
-                    <p>The data for this analysis was collected using automated scripts that fetch information from the official Dutch parliament's open data API. The process involves several steps:</p>
+                    <h2>Dataverzameling en Verwerking</h2>
+                    <p>De data voor deze analyse is verzameld met geautomatiseerde scripts die informatie ophalen uit de officiële open data API van de Tweede Kamer. Het proces omvat meerdere stappen:</p>
                     <ol>
-                        <li><strong>Fetching Decisions:</strong> Parliamentary decisions (besluiten) are retrieved from the <a href="https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/" target="_blank" rel="noreferrer">Tweede Kamer Gegevensmagazijn API</a> starting from December 6, 2023.</li>
-                        <li><strong>Fetching Votes:</strong> Individual votes (stemmingen) for each decision are collected, including party affiliations and vote weights.</li>
-                        <li><strong>Fetching Documents:</strong> Associated documents and their metadata are retrieved.</li>
-                        <li><strong>Text Extraction:</strong> Full text content is extracted from official publications on <a href="https://zoek.officielebekendmakingen.nl/" target="_blank" rel="noreferrer">Officiële Bekendmakingen</a>.</li>
+                        <li><strong>Ophalen van besluiten:</strong> Parlementaire besluiten (besluiten) worden opgehaald uit de <a href="https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/" target="_blank" rel="noreferrer">Tweede Kamer Gegevensmagazijn API</a> vanaf 6 december 2023.</li>
+                        <li><strong>Ophalen van stemmen:</strong> Individuele stemmingen per besluit worden verzameld, inclusief partij en zetelaantal.</li>
+                        <li><strong>Ophalen van documenten:</strong> Gerelateerde documenten en metadata worden opgehaald.</li>
+                        <li><strong>Tekstextractie:</strong> De volledige tekst wordt gehaald van <a href="https://zoek.officielebekendmakingen.nl/" target="_blank" rel="noreferrer">Officiële Bekendmakingen</a>.</li>
                     </ol>
-                    <h2>Data Filters and Criteria</h2>
-                    <p>Several filters are applied to ensure data quality:</p>
+
+                    <h2>Datafilters en Criteria</h2>
+                    <p>Verschillende filters zijn toegepast om de datakwaliteit te waarborgen:</p>
                     <ul>
-                        <li>Only decisions with associated votes (StemmingsSoort not null)</li>
-                        <li>Exclude suspended votes ("Stemmen - gestaakt") and postponed votes ("Stemmen - aangehouden", "Stemmen - uitstellen")</li>
-                        <li>Only include decisions modified after December 6, 2023</li>
-                        <li>Document text length longer than 15,000 characters excluded (limit of the AI)</li>
+                        <li>Alleen besluiten met bijbehorende stemmingen (StemmingsSoort niet null)</li>
+                        <li>Uitsluiting van gestaakte ("Stemmen - gestaakt") en uitgestelde ("Stemmen - aangehouden", "Stemmen - uitstellen") stemmingen</li>
+                        <li>Alleen besluiten gewijzigd na 6 december 2023</li>
+                        <li>Documenten met meer dan 15.000 tekens uitgesloten (limiet van de AI)</li>
                     </ul>
-                    <p>Around 500 decisions were lost, mostly because their document texts were too long for the LLM to process, but also because
-                       the ODATA API or officielebekendmakingen sometimes gave HTTP 404 responses.</p>
-                    <p>We retrieved decisions from December 6th 2023 onwards, yet could not ensure all decisions were made by the parliament related to `Schoof I`, some
-                       of the votes after December 6th 2023 were from the previous parlement. This is probably because the decisions were modified later. Therefore we
-                       removed decisions with votes from Groenlinks and PvdA, since these parties aren't in parlement (seperately) anymore. However, some decisions might
-                       be missing as well, althoug it would be weird that they were created before December 6th but voted for by this parlement.
-                    </p>
-                    <h2>AI Processing</h2>
-                    <p>Document texts are analyzed using a Large Language Model (Mistral-Small-3.2-24B-Instruct) hosted at the University of Groningen's HPC facility. The AI categorizes each decision by:</p>
+                    <p>Ongeveer 500 besluiten gingen verloren, meestal omdat hun documentteksten te lang waren voor de LLM om te verwerken, maar ook door 404-fouten van de ODATA API of Officiële Bekendmakingen.</p>
+                    <p>We hebben besluiten opgehaald vanaf 6 december 2023, maar konden niet garanderen dat ze allemaal bij het parlement van `Schoof I` horen. Sommige stemmen na 6 december waren nog van het vorige parlement. Daarom zijn besluiten met stemmen van GroenLinks en PvdA verwijderd, aangezien deze partijen niet meer afzonderlijk in de Kamer zitten. Toch kunnen enkele besluiten ontbreken.</p>
+
+                    <h2>AI-Verwerking</h2>
+                    <p>Documentteksten zijn geanalyseerd met een Large Language Model (Mistral-Small-3.2-24B-Instruct), gehost op de HPC-faciliteit van de Rijksuniversiteit Groningen. De AI categoriseert elk besluit op:</p>
                     <ul>
-                        <li><strong>Topic:</strong> One of predefined categories like immigration, environment, healthcare, etc.</li>
-                        <li><strong>Summary:</strong> A concise summary of the decision in 3-5 paragraphs</li>
-                        <li><strong>Impacts:</strong> Assessment of economic, environmental, social, security, healthcare, rights, and fiscal impacts</li>
-                        <li><strong>Beneficiaries:</strong> Groups that benefit from voting in favor or against (Not shown on this website)</li>
+                        <li><strong>Onderwerp:</strong> Een van de vooraf gedefinieerde categorieën zoals immigratie, milieu, gezondheidszorg, enz.</li>
+                        <li><strong>Samenvatting:</strong> Een beknopte samenvatting van het besluit in 3–5 alinea’s</li>
+                        <li><strong>Impacts:</strong> Beoordeling van economische, milieu-, sociale, veiligheids-, gezondheids-, mensenrechten- en fiscale effecten</li>
+                        <li><strong>Begunstigden:</strong> Groepen die profiteren van een stem vóór of tegen (niet zichtbaar op deze website)</li>
                     </ul>
-                    <h2>AI Prompt Structure</h2>
-                    <p>The AI uses a structured prompt that defines specific evaluation criteria for each impact category, ensuring consistent and objective analysis. The prompt emphasizes conservative inference when information is missing and distinguishes between government fiscal impacts and broader economic costs.</p>
-                    <p>All AI processing is cached to ensure reproducibility and efficiency.</p>
+
+                    <h2>AI Promptstructuur</h2>
+                    <p>De AI gebruikt een gestructureerde prompt met specifieke evaluatiecriteria per impactcategorie, om consistente en objectieve analyses te waarborgen. De prompt benadrukt conservatieve gevolgtrekking bij ontbrekende informatie en maakt onderscheid tussen overheidsfinanciën en bredere economische kosten.</p>
+                    <p>Alle AI-verwerking wordt gecachet om reproduceerbaarheid en efficiëntie te garanderen.</p>
                 </TabPanel>
+
                 <TabPanel value={informationTab} index={3}>
-                    <h2>Nerdy stuff</h2>
-                    <p>If you have access to an LLM, like chatgpt or mistral, you can reproduce the results with the two notebooks in <a href="https://github.com/prhbrt/parliamentary-votes" target="_blank">this repository</a></p>
+                    <h2>Technische informatie</h2>
+                    <p>Als je toegang hebt tot een LLM zoals ChatGPT of Mistral, kun je de resultaten reproduceren met de twee notebooks in <a href="https://github.com/prhbrt/parliamentary-votes" target="_blank">deze repository</a>.</p>
 
-                    <p>These are the prompt and the (pydantic) annotation schema used for the in-context learning using guided generation and <code>mistral-3.2-24B-2506</code>.</p>
-
-                    <h3>Prompt</h3>
+                    <p>Hier staan de prompt en het (pydantic) annotatieschema dat gebruikt is voor in-context learning met guided generation en <code>mistral-3.2-24B-2506</code>.</p>
+                
                     <pre style={{whiteSpace: 'pre-wrap', fontFamily: 'monospace', paddingLeft: '30px'}}>
-{String.raw`You are a parliamentary voting annotator.
-Return ONLY a JSON object that matches the provided JSON Schema exactly.
-If information is missing, infer conservatively and set *_impact fields to 'unclear'.
+{String.raw`Je bent een annotator van parlementaire stemmingen.
+Geef ALLEEN een JSON-object terug dat exact overeenkomt met het opgegeven JSON-schema.
+Als informatie ontbreekt, redeneer conservatief en zet alle *_impact-velden op 'onduidelijk'.
 
-Evaluate fiscal and cost tags from the perspective of government expenditure only.
-If the motion shifts cost to individuals, that means the state saves; if it shifts cost to the state, that means the state spends.
+Evalueer fiscale labels en kostentags uitsluitend vanuit het perspectief van de RIJKSBEGROTING.
+Als de maatregel kosten verschuift naar burgers/bedrijven, betekent dat dat de overheid bespaart; verschuift het naar de staat, dan maakt de overheid kosten.
 
-Always interpret “Pro vote” as voting in favor of the motion text, and “Con vote” as voting against it.
+Interpreteer “Stem voor” altijd als vóór de motietekst stemmen, en “Stem tegen” als tegen de motietekst.
+Baseer alle beoordelingen op de beoogde effecten die de motie van de overheid vraagt, niet op hypothetische uitkomsten van ander beleid.
+Gebruik “onduidelijk” in plaats van te raden wanneer effecten ambigu zijn.
+Vermijd automatische spiegeling; beoordeel pro en contra onafhankelijk.
 
-Base all assessments on the intended effects the motion requests from the government, not on hypothetical outcomes of other policies.
+# Realistisch / Symbolisch? (doel)
+Genereer of analyseer de stemming volgens de realisme–symboliek-schaal:
+- "realistisch" → procedurele juistheid en plausibele politiek (bijv. begrotingswijziging, wetgeving, sancties).
+- "gemengd/overgang" → combinatie van realistische en symbolische elementen.
+- "symbolisch" → puur signaal/waardestelling (bijv. veroordeling van oorlog).
+- "n.v.t." → geen stilistische eis.
 
-Use “unclear” rather than guessing when impacts are ambiguous.
+# Met kostenstrategie? (bevat_kostenstrategie)
+Als de motie extra uitgaven vraagt: bevat zij óók een dekking of bron (“waar komt het geld vandaan?”)?
+Waardeer als "ja"/"nee"/"onduidelijk"/"n.v.t.".
 
+# Fiscale tags (fiscaal_label_*)
+Fiscale tags slaan ALLEEN op de overheidsbegroting — niet op private prijzen.
+- "bespaart" → overheid geeft minder uit of haalt meer binnen.
+- "kost" → overheid geeft meer uit of haalt minder binnen.
+- "budgetneutraal" → per saldo geen relevante verandering.
+- "onduidelijk" → onvoldoende informatie.
 
-# purpose
-Generate or analyze the voting/motion scene according to the realism–symbolism purpose:
-"realistic" → emphasize procedural accuracy and plausible politics E.g. change budget, introduce new law, introduce sanctions;
-"mixed/transitional" → merge realism with metaphor;
-"symbolic" → render the vote as pure allegory. E.g. condemn a war or conflict,
-"n/a" → no stylistic constraint.
+# Kosteneffecten (economische_kosteneffect_*)
+Beschrijven de totale economische/maatschappelijke lasten, niet alleen de begroting.
+- "lager" → totale last neemt af.
+- "hoger" → totale last neemt toe.
+- "neutraal"/"onduidelijk" waar passend.
 
+# Rechten (rechten_effect_*)
+- "uitgebreid" → uitbreiding/bescherming van rechten of toegang (privacy, asiel, zorg).
+- "ingeperkt" → beperking of inkrimping van dergelijke rechten.
+- Beïnvloeden handhaving, datagebruik of toezicht? → beoordeel als rechtenrelevant.
 
-# includes_cost_stategy
-If the decision is about spending more money, does it also include where the money should come from?
+# Milieu (milieu_effect_*)
+Alleen invullen als de motie direct/voorzienbaar raakt aan milieu/landbouw/stikstof/energie/duurzaamheid; anders "n.v.t.".
 
-Fiscal and cost impacts
- * Fiscal tags (fiscal_tag_pro_vote / fiscal_tag_con_vote) refer to government budget effects only — not private costs or prices.
- * "saves" → government spends less or collects more.
- * "costs" → government spends more or collects less.
- * "budget-neutral" → roughly no fiscal change.
- * "unclear" → not enough detail to tell.
+# Veiligheid (veiligheids_effect_*)
+- "verbeterd" → verhoogt veiligheid/anti-terreur/handhavingscapaciteit.
+- "verslechterd" → verlaagt die capaciteit.
+- "neutraal"/"onduidelijk" waar passend.
 
-Cost impacts (cost_impact_*) describe overall economic costs or financial burden on society, not just on government.
- * "lower" means overall cost burden decreases.
- * "higher" means overall cost burden increases.
+# Asieltoegankelijkheid (asiel_toegankelijkheid_*)
+- "gemakkelijker" → soepeler toegang/procedure; verwachte instroom hoger of verblijfszekerheid groter.
+- "moeilijker" → strenger; verwachte instroom lager of verblijfszekerheid kleiner.
+- "neutraal"/"onduidelijk" waar passend.
 
-Avoid automatic mirroring; evaluate pro and con sides independently.
+# Geclaimde begunstigden
+- “begunstigden_van_stem_voor” = wie de motie expliciet wil helpen/beschermen.
+- “begunstigden_van_stem_tegen” = wie baat heeft bij verwerping/status quo.
+Gebruik groepen (bijv. vluchtelingen, belastingbetalers, boeren, zorgmedewerkers).
 
-Rights impacts
- * "expands" → extends, protects, or strengthens individual rights or access (e.g., privacy, asylum, healthcare).
- * "restricts" → limits or removes such rights.
- * "neutral" → no relevant rights dimension.
+# Extra NL-specifieke effecten (richtingafhankelijk, met _van_stem_voor / _van_stem_tegen)
 
-If the motion changes enforcement, data use, or oversight, treat it as affecting rights.
+- pas_melders_effect_*:
+  *Helpt/belemmert/…* de situatie van PAS-melders (bedrijven met oude PAS-melding) m.b.t. legalisatie/vergunning?
+  Waarden: "helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t.".
 
-Environment impacts
-Assess only if the motion directly or foreseeably affects environmental regulation, agriculture, nitrogen, energy, or sustainability.
-Otherwise use "n/a".
+- gemeentelijke_last_* en provinciale_last_*:
+  Verandert de uitvoerings- en financiële last voor gemeenten/provincies (opvang, handhaving, uitvoering)?
+  Waarden: "hoger", "neutraal", "lager", "onduidelijk", "n.v.t.".
 
-Security impacts
- * "improves" → enhances safety, counter-terrorism, or law enforcement capability.
- * "worsens" → reduces or undermines security capacity.
- * "neutral" → not relevant to safety or security.
- * "unclear" → possible mixed effects.
+- schiphol_capaciteit_*:
+  Beïnvloedt de maatregel de capaciteit of groeiruimte op/om Schiphol?
+  Waarden: "uitgebreid" (meer ruimte), "neutraal", "beperkt" (minder ruimte), "onduidelijk", "n.v.t.".
 
-Claimed beneficiaries
-Identify who the motion explicitly aims to help or protect (“claimed beneficiaries pro vote”).
-Identify who benefits from rejecting the motion or maintaining the status quo (“claimed beneficiaries con vote”).
-Use groups (e.g., refugees, taxpayers, farmers, healthcare workers) rather than individuals.
+- defensieuitgaven_*:
+  Draagt de maatregel bij aan het halen/onderhouden van de 2%-NAVO-norm?
+  Waarden: ">=2% bbp", "<2% bbp", "neutraal", "onduidelijk", "n.v.t.".
 
-Notes
- * Use "notes" for concise reasoning behind your tagging (2–4 sentences).
- * Mention key trade-offs (e.g., rights vs. security, fiscal savings vs. social cost).
- * Example micro-rule summary (can be pasted in the system prompt)
+- box3_effect_*:
+  Effect op de lastenverdeling binnen Box 3 (vermogensrendementsheffing).
+  Waarden: "hogere lasten", "lagere lasten", "herverdeling", "neutraal", "onduidelijk", "n.v.t.".
 
-“Evaluate from the government perspective.
-‘Saves’ = reduces state spending; ‘Costs’ = increases it.
-Do not assume symmetry between pro and con tags.
-Distinguish private costs from fiscal costs.
-Mark impacts as ‘unclear’ or ‘n/a’ if not directly affected.”
+- kinderopvang_betaalbaarheid_*:
+  Verandert betaalbaarheid/toegankelijkheid van kinderopvang voor gezinnen?
+  Waarden: "verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t.".
+
+# Dierenwelzijn (dierenwelzijn_effect_*)
+Gebruik dit veld wanneer de motie direct betrekking heeft op dieren, landbouwpraktijken of bescherming van wilde dieren.
+- "verbeterd" → hogere welzijnsnormen, betere leefruimte, strengere bescherming.
+- "verslechterd" → lagere normen, meer intensieve houderij, versoepeling van regels.
+- "neutraal" → geen effect op dierenwelzijn.
+- "onduidelijk" → gemengde effecten of niet goed in te schatten.
+- "n.v.t." → niet van toepassing.
+
+# EU-dimensie (eu_dimensie)
+Beoordeel of de motie (voor/tegen) botst met EU-kaders:
+- "EU-richtlijn / verordening" (implementatie/naleving),
+- "Schengen / CEAS" (grens/asiel),
+- "staatssteun",
+- "geen / niet relevant",
+- "onduidelijk", "n.v.t.".
+
+# Juridisch risico (juridische_risico_*)
+Kans op strijd met Grondwet of EU-recht:
+- "grondwettelijk risico", "EU-recht risico", "laag risico", "onduidelijk", "n.v.t.".
+
+# Uitvoeringsmoeilijkheid (uitvoeringsmoeilijkheid_*)
+Schatting van beleids-/IT-/capaciteitscomplexiteit voor uitvoerders (COA/IND/gemeenten/etc.):
+- "laag", "middel", "hoog", "onduidelijk", "n.v.t.".
+
+# Tijdshorizon (enkelvoudig)
+Gebruik het **enkelvoudige** veld tijdshorizon (géén pro/contra-variant):
+- "direct (<1j)", "kort (1–3j)", "midden (3–5j)", "lang (>5j)", "onduidelijk", "n.v.t.".
+Dit is een eigenschap van het voorstel zelf; bij verwerping vervalt het.
+
+# Financieringsbron (enkelvoudig)
+Gebruik het **enkelvoudige** veld financieringsbron (géén pro/contra-variant):
+- "algemene middelen", "geoormerkt fonds", "EU-fondsen", "gemeentelijke middelen", "privaat / heffing", "onduidelijk", "n.v.t.".
+Eigenschap van de maatregel; bij verwerping vervalt de dekking.
+
+# Coalitieakkoord-consistentie (coalitieakkoord_consistentie_*)
+Beoordeel per richting of instemming/weigering in lijn is met het coalitieakkoord:
+- "in lijn", "gedeeltelijk in lijn", "niet in lijn", "onduidelijk", "n.v.t.".
+
+# Bronnen en notities
+- Voeg onder “bronnen” korte verwijzingen toe (Kamerstuknummer, nieuws, memo’s) indien beschikbaar.
+- Gebruik “notities” voor beknopte motivatie (2–4 zinnen) en benoem kernafruilen (rechten vs. veiligheid, fiscale besparing vs. maatschappelijke kosten, etc.).
+
 
 Schema:
-...PADANTIC ANNOTATION SCHEMA...`}
+{StemAnnotatie.model_json_schema()}`}
                     </pre>
-                    <h3>Annotation schema</h3>
+                    <h3>Annotatieschema</h3>
                     <pre style={{whiteSpace: 'pre-wrap', fontFamily: 'monospace', paddingLeft: '10px'}}>
-{String.raw`class VoteAnnotation(BaseModel):
-    topic: Literal[
-  'Immigration / asylum policy',
-  'Nitrogen ("stikstof") / agriculture ',
-  'Environmental regulation',
-  'Animal wellfare',
-  'Housing and real estate / housing shortage'
-  'Climate & energy policy / sustainability / decarbonisation',
-  'Healthcare and long-term care funding / capacity',
-  'Digitalization, software sovereignty, cybersecurity',
-  'Government stability, coalition collapse, confidence motions',
-  'European Council on Refugees and Exiles',
-  'Parliamentary inquiries / oversight - COVID-19 response',
-  'Parliamentary inquiries / oversight -Groningen gas extraction',
-  'Public finances and budgeting / taxation',
-  'International / foreign policy - Ukraine / Russia',
-  'International / foreign policy - Palestina / Israel',
-  'International / foreign policy - Middle East',
-  'International / foreign policy - Other',
-  'Other',
-]
-    purpose: Literal["realistic", "mixed/transitional", "symbolic", "n/a"] = "n/a"
-    includes_cost_stategy: Literal["yes","no","unclear","n/a"] = "n/a"
+{String.raw`
+class StemAnnotatie(BaseModel):
+    # --- Hoofdclassificatie ---
+    onderwerp: Literal[
+        # Migratie / Asiel
+        "Migratie- en asielbeleid (algemeen)",
+        "Spreidingswet / intrekking of aanpassing",
+        "Grensbewaking / terugkeerbeleid",
+        # Wonen
+        "Wonen en vastgoed / woningtekort",
+        "Wet betaalbare huur",
+        "Huurdersbescherming / Huurcommissie",
+        "Hypotheek- en koopwoningbeleid",
+        # Klimaat / stikstof / landbouw
+        "Stikstofbeleid / PAS-melders",
+        "Landbouw en grondgebruik",
+        "Dierenwelzijn / veehouderij",
+        "Milieuwetgeving / Natura 2000",
+        "Klimaat- en energiebeleid / duurzaamheid / decarbonisatie",
+        "Schiphol / luchtvaart en geluidsnormen",
+        # Zorg, welzijn, kosten van leven
+        "Zorg en langdurige zorg / capaciteit en financiering",
+        "Kinderopvang (hervorming financiering)",
+        "Kosten van levensonderhoud / energie / accijnzen",
+        "Pensioen (Wtp) / AOW",
+        # Digitaal / veiligheid / rechtsstaat
+        "Digitalisering, AI, platformregulering, cybersecurity",
+        "Inlichtingen- en veiligheidswet (Wiv / TCOA)",
+        "Wet tegen spionage en buitenlandse inmenging",
+        # Bestuur / parlementair
+        "Kabinet / coalitiestabiliteit / moties van wantrouwen",
+        "Parlementaire enquête / COVID-19",
+        "Parlementaire enquête / gaswinning Groningen",
+        # Financiën en belastingen
+        "Overheidsfinanciën / begroting / belasting (algemeen)",
+        "Box 3 / vermogensrendementsheffing",
+        "Gemeentefinanciën / provinciale bijdragen",
+        # Internationaal
+        "Defensie en NAVO-verplichtingen",
+        "Buitenlands beleid – Oekraïne / Rusland",
+        "Buitenlands beleid – Israël / Palestina",
+        "Buitenlands beleid – Midden-Oosten (overig)",
+        "Buitenlands beleid – Overig",
+        # Mobiliteit / infrastructuur
+        "Openbaar vervoer / spoorconcessies",
+        # Onderwijs / arbeid
+        "Onderwijs / lerarentekort / studiefinanciering",
+        # Media / cultuur
+        "Publieke omroep / mediabeleid",
+        # Overig
+        "Overig"
+    ]
 
-    summary_of_decision: str = ""
-    beneficiaries_of_vote_in_favor: List[str] = []
-    beneficiaries_of_vote_against: List[str] = []
+    # --- Doel en context van de stemming ---
+    doel: Literal["realistisch", "gemengd/overgang", "symbolisch", "n.v.t."] = "n.v.t."
+    bevat_kostenstrategie: Literal["ja", "nee", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    economic_cost_impact_of_vote_in_favor: Literal["lower","neutral","higher","unclear", "n/a"] = "n/a"
-    economic_cost_impact_of_vote_against: Literal["lower","neutral","higher","unclear", "n/a"] = "n/a"
+    # --- Samenvatting en begunstigden ---
+    samenvatting_van_besluit: str = ""
+    begunstigden_van_stem_voor: List[str] = []
+    begunstigden_van_stem_tegen: List[str] = []
 
-    environment_impact_of_vote_in_favor: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
-    environment_impact_of_vote_against: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
+    # --- Macro-effecten ---
+    economische_kosteneffect_van_stem_voor: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
+    economische_kosteneffect_van_stem_tegen: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    security_impact_of_vote_in_favor: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
-    security_impact_of_vote_against: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
+    milieu_effect_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    milieu_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    social_security_impact_of_vote_in_favor: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
-    social_security_impact_of_vote_against: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
+    veiligheids_effect_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    veiligheids_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    healthcare_impact_of_vote_in_favor: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
-    healthcare_impact_of_vote_against: Literal["improves","neutral","worsens","unclear", "n/a"] = "n/a"
+    sociale_zekerheidseffect_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    sociale_zekerheidseffect_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    rights_impact_of_vote_against: Literal["expands","neutral","restricts","unclear", "n/a"] = "n/a"
-    rights_impact_of_vote_in_favor: Literal["expands","neutral","restricts","unclear", "n/a"] = "n/a"
+    zorg_effect_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    zorg_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
 
-    fiscal_tag_of_vote_against: Literal["saves","costs","budget-neutral","unclear", "n/a"] = "n/a"
-    fiscal_tag_of_vote_in_favor: Literal["saves","costs","budget-neutral","unclear", "n/a"] = "n/a"
-    notes: Optional[str] = None`}
+    rechten_effect_van_stem_voor: Literal["uitgebreid", "neutraal", "ingeperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+    rechten_effect_van_stem_tegen: Literal["uitgebreid", "neutraal", "ingeperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    fiscaal_label_van_stem_voor: Literal["bespaart", "kost", "budgetneutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+    fiscaal_label_van_stem_tegen: Literal["bespaart", "kost", "budgetneutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    # --- Specifieke thema-effecten ---
+    asiel_toegankelijkheid_van_stem_voor: Literal["gemakkelijker", "neutraal", "moeilijker", "onduidelijk", "n.v.t."] = "n.v.t."
+    asiel_toegankelijkheid_van_stem_tegen: Literal["gemakkelijker", "neutraal", "moeilijker", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    oekraine_effect_van_stem_voor: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+    oekraine_effect_van_stem_tegen: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    palestina_effect_van_stem_voor: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+    palestina_effect_van_stem_tegen: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    israel_effect_van_stem_voor: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+    israel_effect_van_stem_tegen: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    huurmarkt_effect_van_stem_voor: Literal["verbeterd", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+    huurmarkt_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    koopwoning_effect_van_stem_voor: Literal["verbeterd", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+    koopwoning_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    hypotheeklasten_effect_van_stem_voor: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
+    hypotheeklasten_effect_van_stem_tegen: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    kosten_van_leven_effect_van_stem_voor: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
+    kosten_van_leven_effect_van_stem_tegen: Literal["lager", "neutraal", "hoger", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    pas_melders_effect_van_stem_voor: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+    pas_melders_effect_van_stem_tegen: Literal["helpt", "neutraal", "belemmert", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    gemeentelijke_last_van_stem_voor: Literal["hoger", "neutraal", "lager", "onduidelijk", "n.v.t."] = "n.v.t."
+    gemeentelijke_last_van_stem_tegen: Literal["hoger", "neutraal", "lager", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    provinciale_last_van_stem_voor: Literal["hoger", "neutraal", "lager", "onduidelijk", "n.v.t."] = "n.v.t."
+    provinciale_last_van_stem_tegen: Literal["hoger", "neutraal", "lager", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    schiphol_capaciteit_van_stem_voor: Literal["uitgebreid", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+    schiphol_capaciteit_van_stem_tegen: Literal["uitgebreid", "neutraal", "beperkt", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    defensieuitgaven_van_stem_voor: Literal[">=2% bbp", "<2% bbp", "neutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+    defensieuitgaven_van_stem_tegen: Literal[">=2% bbp", "<2% bbp", "neutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    box3_effect_van_stem_voor: Literal["hogere lasten", "lagere lasten", "herverdeling", "neutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+    box3_effect_van_stem_tegen: Literal["hogere lasten", "lagere lasten", "herverdeling", "neutraal", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    kinderopvang_betaalbaarheid_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    kinderopvang_betaalbaarheid_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    dierenwelzijn_effect_van_stem_voor: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+    dierenwelzijn_effect_van_stem_tegen: Literal["verbeterd", "neutraal", "verslechterd", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    eu_dimensie_van_stem_voor: Literal[
+        "EU-richtlijn / verordening", "Schengen / CEAS", "staatssteun", "geen / niet relevant", "onduidelijk", "n.v.t."
+    ] = "n.v.t."
+    eu_dimensie_van_stem_tegen: Literal[
+        "EU-richtlijn / verordening", "Schengen / CEAS", "staatssteun", "geen / niet relevant", "onduidelijk", "n.v.t."
+    ] = "n.v.t."
+    
+    juridische_risico_van_stem_voor: Literal["grondwettelijk risico", "EU-recht risico", "laag risico", "onduidelijk", "n.v.t."] = "n.v.t."
+    juridische_risico_van_stem_tegen: Literal["grondwettelijk risico", "EU-recht risico", "laag risico", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    uitvoeringsmoeilijkheid_van_stem_voor: Literal["laag", "middel", "hoog", "onduidelijk", "n.v.t."] = "n.v.t."
+    uitvoeringsmoeilijkheid_van_stem_tegen: Literal["laag", "middel", "hoog", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    tijdshorizon: Literal["direct (<1j)", "kort (1–3j)", "midden (3–5j)", "lang (>5j)", "onduidelijk", "n.v.t."] = "n.v.t."
+    
+    financieringsbron_van_stem_voor: Literal[
+        "algemene middelen", "geoormerkt fonds", "EU-fondsen", "gemeentelijke middelen", "privaat / heffing", "onduidelijk", "n.v.t."
+    ] = "n.v.t."
+    financieringsbron_van_stem_tegen: Literal[
+        "algemene middelen", "geoormerkt fonds", "EU-fondsen", "gemeentelijke middelen", "privaat / heffing", "onduidelijk", "n.v.t."
+    ] = "n.v.t."
+
+    uitvoerende_instanties: List[str] = []  # bijv. COA, IND, gemeenten, provincies, NVWA, NCTV
+    coalitieakkoord_consistentie_van_stem_voor: Literal["in lijn", "gedeeltelijk in lijn", "niet in lijn", "onduidelijk", "n.v.t."] = "n.v.t."
+    coalitieakkoord_consistentie_van_stem_tegen: Literal["in lijn", "gedeeltelijk in lijn", "niet in lijn", "onduidelijk", "n.v.t."] = "n.v.t."
+
+    # --- Bronnen en notities ---
+    bronnen: List[str] = []
+    notities: Optional[str] = None`}
                     </pre>
                 </TabPanel>
             </DialogContent>

@@ -29,8 +29,10 @@ export function Filters() {
                 <MenuItem value="all" key="all">{t("All topics")}</MenuItem>
                 {topics.map(topic => <MenuItem key={topic} value={topic}>{t(topic)}</MenuItem>)}
             </Select>
-            <Box key="filter-relative" style={{width: "180px", flexGrow: 0}} p={1}><Switch label={t("Normalize")} defaultChecked onChange={()=> setNormalize(!normalize)} />&nbsp;{!normalize ? t("Relative") : t("Absolute")}</Box>
-            <Box key="filter-binarize" style={{width: "230px", flexGrow: 0}} p={1}><Switch label={t("Binary")} defaultChecked onChange={()=> setBinary(!binary)} />&nbsp;{!binary ? t("Simple") : t("Complete")}</Box>
+            <Box display="flex">
+                <Box key="filter-relative" style={{width: "180px", flexGrow: 0}} p={1}><Switch label={t("Normalize")} defaultChecked onChange={()=> setNormalize(!normalize)} />&nbsp;{!normalize ? t("Relative") : t("Absolute")}</Box>
+                <Box key="filter-binarize" style={{width: "230px", flexGrow: 0}} p={1}><Switch label={t("Binary")} defaultChecked onChange={()=> setBinary(!binary)} />&nbsp;{!binary ? t("Simple") : t("Complete")}</Box>
+            </Box>
         </>
 
 }
