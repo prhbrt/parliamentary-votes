@@ -11,8 +11,17 @@ import { data } from 'react-router';
 const initialState = {};
 const FilterContext = createContext(initialState);
 
-const impacts = ["economic_cost_impact", "environment_impact", "fiscal_tag",
-  "healthcare_impact", "rights_impact","security_impact", "social_security_impact"];
+
+const impacts = [
+ 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label', 
+ 'coalitieakkoord_consistentie', 'defensieuitgaven', 'dierenwelzijn_effect',
+ 'economische_kosteneffect', 'eu_dimensie', 'financieringsbron',
+ 'gemeentelijke_last', 'huurmarkt_effect', 'hypotheeklasten_effect',
+ 'israel_effect', 'juridische_risico', 'kinderopvang_betaalbaarheid',
+ 'koopwoning_effect', 'kosten_van_leven_effect', 'milieu_effect',
+ 'oekraine_effect', 'palestina_effect', 'pas_melders_effect',
+ 'provinciale_last', 'rechten_effect', 'schiphol_capaciteit', 'zorg_effect',
+ 'sociale_zekerheidseffect', 'uitvoeringsmoeilijkheid', 'veiligheids_effect', ];
 
 const seats = {
   "PVV": "37",
@@ -81,39 +90,38 @@ export function useThrottledSetter(setState, delay = 1000) {
 
 
 function runFilters(data, metadata, metadata_columns, columns,
-    topic, keywords, binary, normalize,
+    topic, keywords, normalize,
     backed, neutral, symbolic, realistic,
-    area, party, impact,
-    filterBeneficiaries
+    impactFilters, filterBeneficiaries
   ) {
   const MD_NUMBER_COLUMN = data ? metadata_columns.indexOf('Nummer') : -1;
   const NUMBER_COLUMN = data ? columns.indexOf('Nummer') : -1;
   const PARTY_COLUMN = data ? columns.indexOf('party') : -1;
-  const TOPIC_COLUMN = data ? metadata_columns.indexOf('topic') : -1;
-  const BENEFICIARIES_COLUMN = data? columns.indexOf('beneficiaries') : -1;
+  const TOPIC_COLUMN = data ? metadata_columns.indexOf('onderwerp') : -1;
+  
+  const BENEFICIARIES_COLUMN = data? columns.indexOf('begunstigden') : -1;
   const COUNT_COLUMN = data ? columns.indexOf('count') : -1;
   const VOTE_COLUMN = data ? columns.indexOf('vote') : -1;
 
-  const MD_DECISION_COLUMN = data ? metadata_columns.indexOf("summary_of_decision"): -1;
-  const MD_NOTES_COLUMN = data ? metadata_columns.indexOf("notes"): -1;
+  const MD_DECISION_COLUMN = data ? metadata_columns.indexOf("samenvatting_van_besluit"): -1;
+  const MD_NOTES_COLUMN = data ? metadata_columns.indexOf("notities"): -1;
   const MD_TITEL_COLUMN = data ? metadata_columns.indexOf("Titel"): -1;
   const MD_ONDERWERP_COLUMN = data ? metadata_columns.indexOf("Onderwerp"): -1;
-  const MD_PURPOSE_COLUMN = data ? metadata_columns.indexOf("purpose"): -1;
-  const MD_BACKED_COLUMN = data ? metadata_columns.indexOf("includes_cost_stategy"): -1;
-  const AREA_COLUMN = data ? columns.indexOf(area): -1;
+  const MD_PURPOSE_COLUMN = data ? metadata_columns.indexOf("doel"): -1;
+  const MD_BACKED_COLUMN = data ? metadata_columns.indexOf("bevat_kostenstrategie"): -1;
   
   const NUMMER_COLUMN = data ? columns.indexOf('Nummer'): -1;
   const MD_NUMMER_COLUMN = data ? metadata_columns.indexOf('Nummer') : -1;
 
   var filteredMetadata = metadata;
  
-  var purposes = []; 
-  if (symbolic) purposes.push("symbolic");
-  if (neutral) purposes.push("mixed/transitional");
-  if (realistic) purposes.push("realistic");
+  // var purposes = []; 
+  // if (symbolic) purposes.push("symbolisch");
+  // if (neutral) purposes.push("mixed/transitional");
+  // if (realistic) purposes.push("realistic");
   
-  if (purposes.length > 0 && purposes.length < 3)
-    filteredMetadata = filteredMetadata.filter(metadata => purposes.includes(metadata[MD_PURPOSE_COLUMN]));
+  // if (purposes.length > 0 && purposes.length < 3)
+  //   filteredMetadata = filteredMetadata.filter(metadata => purposes.includes(metadata[MD_PURPOSE_COLUMN]));
 
   if (backed)
     filteredMetadata = filteredMetadata.filter(metadata => metadata[MD_BACKED_COLUMN] == 'yes');
@@ -134,10 +142,16 @@ function runFilters(data, metadata, metadata_columns, columns,
     )})
   }
 
-  if (area) {
-    const nummers = filteredData.filter(sample => sample[AREA_COLUMN] === impact && sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0).map(sample => sample[NUMMER_COLUMN]);
+  if (impactFilters.length > 0) {
+    var nummers = null;
+    impactFilters.map(([area, party, impact]) => {
+      const newNummers = new Set(filteredData.filter(
+        sample => sample[columns.indexOf(area)] === impact && sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0
+      ).map(sample => sample[NUMMER_COLUMN]));
+      nummers = nummers ? newNummers.intersection(nummers) : newNummers;
+    });
     filteredMetadata = filteredMetadata.filter(metadata => {
-      return nummers.includes(metadata[MD_NUMMER_COLUMN]);
+      return nummers.has(metadata[MD_NUMMER_COLUMN]);
     })
   }
 
@@ -165,7 +179,8 @@ function runFilters(data, metadata, metadata_columns, columns,
           beneficiary_counts[beneficiary] += count;
         })
   });
-  all_beneficiaries = all_beneficiaries.sort((a, b) => beneficiary_counts[b] - beneficiary_counts[a]);
+  all_beneficiaries = all_beneficiaries.filter(b => beneficiary_counts[b] > 0).sort((a, b) => beneficiary_counts[b] - beneficiary_counts[a]);
+
   if (filterBeneficiaries.trim() !== "") {
     const keywords_ = filterBeneficiaries.toLowerCase().split(" ")
     all_beneficiaries = all_beneficiaries.filter(beneficiary => 
@@ -208,7 +223,7 @@ function runFilters(data, metadata, metadata_columns, columns,
 
 export const FilterProvider = ({ children }) => {
   const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
-  const [informationOpen, setInformationOpen] = useState(true);
+  const [informationOpen, setInformationOpen] = useState(false);
 
   const [keywords, setKeywords] = useState("");
   const [binary, setBinary] = useState(false);
@@ -227,17 +242,27 @@ export const FilterProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [area, setArea] = useState(null);
-  const [party, setParty] = useState(null);
-  const [impact, setImpact] = useState(null);
+  const [impactFilters, setImpactFilters] = useState([]);
 
   const throttledSetKeywords = useThrottledSetter(setKeywords, 1000);
   const throttledSetFilterBeneficiaries = useThrottledSetter(setFilterBeneficiaries, 1000);
   const { data, metadata, metadata_columns, columns } = allData;
 
+  function addImpactFilter(area, party, impact) {
+    if (impactFilters.filter(([a, p, i]) => a===area && p === party && i === impact).length > 0)
+      return
+    setImpactFilters(filters => [...filters, [area, party, impact]]);
+  }
+  function removeImpactFilter(area, party, impact) {
+    const newFilters = impactFilters.filter(([a, p, i]) => a!==area || p !== party || i !== impact);
+    if (newFilters.length !== impactFilters.length)
+      setImpactFilters(newFilters);
+  }
+
+
   useEffect(() => {
     const loadData = async () => {
-      try {
+      // try {
         const response = await fetch(dataFile);
         const arrayBuffer = await response.arrayBuffer();
         const zip = await JSZip.loadAsync(arrayBuffer);
@@ -247,46 +272,40 @@ export const FilterProvider = ({ children }) => {
           window.data = JSON.parse(jsonContent);
           setData(JSON.parse(jsonContent));
         } else {
-          setError(f("Couldn't get data") + ".")
+          setError(t("Couldn't get data") + ".")
         }
         setLoading(false);
-      } catch (e) {
-        setError(f("Couldn't get data") + ": " + e )
-      }
+      // } catch (e) {
+      //   setLoading(false);
+      //   setError(t("Couldn't get data") + ": " + e )
+      // }
     };
     loadData();
   }, []);
   
   const { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism } = React.useMemo(() => {
     return runFilters(data, metadata, metadata_columns, columns,
-      topic, keywords, binary, normalize,
-      backed, neutral, symbolic, realistic,
-      area, party, impact,
+      topic, keywords, normalize,
+      backed, neutral, symbolic, realistic, impactFilters,
       filterBeneficiaries
     );
   }, [data, metadata, metadata_columns, columns,
-      topic, keywords, binary, normalize,
+      topic, keywords, normalize,
       backed, neutral, symbolic, realistic,
-      area, party, impact,
+      impactFilters,
       filterBeneficiaries
     ]);
   
   
-  function reset() {
-    setTopic("all");
-  }
-
-  function setFocus(area, party, impact) { setArea(area); setParty(party); setImpact(impact); }
-  function resetFocus() { setParty(null); setImpact(null); setArea(null); }
 
   return <FilterContext.Provider value={{
-    error, loading, impacts, reset, parties,
+    error, loading, impacts, parties,
     data: filteredData, metadata: filteredMetadata,
     topics, topic, setTopic, columns, metadataColumns: metadata_columns,
     keywords, setKeywords: throttledSetKeywords, 
     binary, setBinary, normalize, setNormalize,
     showDecisions, setShowDecisions,
-    area, party, impact, resetFocus, setFocus,
+    impactFilters, removeImpactFilter, addImpactFilter,
     isOpen, setOpen, informationOpen, setInformationOpen,
     backed, setBacked, neutral, setNeutral, symbolic, setSymbolic,  realistic, setRealistic,
     all_beneficiaries, beneficiaries, beneficiary_counts,

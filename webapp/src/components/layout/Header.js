@@ -101,7 +101,7 @@ export function Header({}) {
         </Box>
         <Box flex={1} minWidth={0} p={0} gap={0} flexDirection="row-reverse" display="flex">
           <Box className="hide-sm" display="flex" flexDirection="row-reverse">
-            <LanguageMenu/>
+            {/* <LanguageMenu/> */}
             <Link style={{backgroundColor: '#dc002d'}} id="info-link" aria-controls={open ? 'info-link-menu' : undefined}
                   aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={() => setInformationOpen(true)}>{t("Info")}
             </Link>
@@ -129,7 +129,7 @@ export function Header({}) {
         </Link>
       </Box>
       <Box className="show-sm" display="flex" flexDirection="column-reverse" flexGrow={1} style={{backgroundColor: 'white'}}><Filters/></Box>
-      <LanguageMenuSmall/>
+      {/* <LanguageMenuSmall/> */}
     </Box></Box>
   </>);
 }
