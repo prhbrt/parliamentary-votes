@@ -80,7 +80,7 @@ const resources = {
       "Dutch": "Nederlands",
       "English": "Engels (English)",
       "Language": "Taal",
-      "Parliamentary votes": "Parlementaire stemmen",
+      "Parliamentary votes": "Tweede Kamer stemmen vanaf 6 december 2023",
       "Couldn't get data": "Kon geen data ophalen",
       "Loading data": "Data inladen",
       'Political party': 'Politieke partij',

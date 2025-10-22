@@ -127,14 +127,14 @@ function Info({ information, setInformation }) {
                         Dit is relevant omdat een begunstigde per stem wordt geteld, aangezien een partij niet altijd unaniem stemt.
                     </p>
 
-                    <h2>Realisme en financiën</h2>
-                    <p>Elk besluit wordt ook beoordeeld op realisme-symboliek en of het een financiële strategie bevat.</p>
+                    <h2>Realisme</h2>
+                    <p>Elk besluit wordt ook beoordeeld op realisme en symboliek.</p>
                     <ul>
                         <li><strong>realistisch:</strong> procedurele nauwkeurigheid en plausibele politiek, bijv. begrotingswijzigingen, nieuwe wetten, sancties</li>
                         <li><strong>neutraal:</strong> zowel realistisch als symbolisch</li>
                         <li><strong>symbolisch:</strong> allegorisch, bijv. het veroordelen van een oorlog of conflict</li>
                     </ul>
-                    <p>Sommige besluiten missen deze annotatie. Bovendien, als het besluit meer geld uitgeeft, is dan ook aangegeven waar dat geld vandaan moet komen? Je kunt ervoor kiezen alleen besluiten met financiële onderbouwing te tonen.</p>
+                    
                 </TabPanel>
 
                 <TabPanel value={informationTab} index={2}>
