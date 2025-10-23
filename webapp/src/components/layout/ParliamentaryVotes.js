@@ -1,8 +1,10 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Grid,  Box, Typography, Chip } from '@mui/material';
-import {  CircularProgress, TextField } from '@mui/material';
+import {  CircularProgress, TextField, IconButton } from '@mui/material';
 
 import { TableVirtuoso } from 'react-virtuoso'
+
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 
 import './Layout.css';
 import "../../rug-huisstijl.css"
@@ -18,26 +20,31 @@ import DecisionsList from './DecisionsList';
 import Info from './Info';
 import Beneficiaries from './Beneficiaries';
 import tinygradient from 'tinygradient';
+import { AnnotationDialogue } from '../AnnotationInfo';
 
 window.tinygradient = tinygradient;
+
+const properties = ['coalitieakkoord_consistentie', 'uitvoeringsmoeilijkheid', 'financieringsbron', 'eu_kaders', ]
 
 const use_neutral_color_for = [
     'asiel_toegankelijkheid', 'oekraine_effect', 'palestina_effect', 'israel_effect', 'schiphol_capaciteit', 'defensieuitgaven',
     'oekraine_effect', 'palestina_effect', 'asiel_toegankelijkheid', ' uitvoeringsmoeilijkheid', 'juridische_risico', 'eu_dimensie',
-    'financieringsbron',
+    'financieringsbron', 'eu_kaders', 'financieringsbron'
 ]
 
 const neutral_colors = {
     '<2% bbp': "#35B6B4",
     '>=2% bbp': "#FFDC64",
+    "neutraal": "#EC6581",
     "gemakkelijker": "#35B6B4", "moeilijker": "#FFDC64",
     "helpt": "#35B6B4", "belemmert": "#FFDC64",
     "uitgebreid": "#35B6B4", "beperkt": "#FFDC64",
     'laag': "#dc002d", 'hoog': "#60B669",
+    'geen conflict': '#60B669',
 
     'algemene middelen': "#EC6581",
     'geoormerkt fonds': "#009CEF",
-    'privaat / heffing': "#772D68",
+    'privaat / heffing': "#000",
     "gemeentelijke middelen": "#35B6B4",
     "EU-fondsen": "#FFDC64",
 
@@ -67,6 +74,7 @@ const colors = {
     'neutraal': "#FFDC64",
     'budgetneutraal': "#FFDC64",
     'gedeeltelijk in lijn': "#FFDC64",
+    "herverdeling": "#EC6581",
     "Voor": "#60B669",
     'bespaart': "#60B669",
     'gemakkelijker': "#60B669",
@@ -100,9 +108,9 @@ const order = ['>=2% bbp', '<2% bbp', 'laag risico', 'algemene middelen', 'gemee
     'Tegen', 'belemmert', 'beperkt', 'hoger', 'hogere lasten', 'hoog', 'ingeperkt', 'kost', 'moeilijker', 'niet in lijn',
     'verslechterd',
     
-    'middel', 'neutraal', 'budgetneutraal', 'gedeeltelijk in lijn',
+    'middel', 'neutraal', 'budgetneutraal', 'gedeeltelijk in lijn', "herverdeling",
     
-    'Voor', 'bespaart', 'gemakkelijker', 'helpt', 'in lijn', 'laag', 'lager', 'lagere lasten', 'uitgebreid', 'verbeterd',
+    'Voor', 'bespaart', 'gemakkelijker', 'helpt', 'in lijn', 'laag', 'lager', 'lagere lasten', 'uitgebreid', 'verbeterd', 'geen conflict',
     
     'not-participated', 'Niet deelgenomen', 'n/a', 'n.v.t.', 'geen / niet relevant', 'unclear', 'onduidelijk']
 
@@ -116,6 +124,7 @@ const binaryColumns = [
     '<2% bbp', '>=2% bbp',
     "gemakkelijker",  "moeilijker",
     "helpt", "belemmert", "uitgebreid", "beperkt", 'laag', 'hoog',
+    'geen conflict',
 
     'geoormerkt fonds', 'privaat / heffing', 'algemene middelen', "gemeentelijke middelen", "EU-fondsen",
     'EU-recht risico', "grondwettelijk risico", "EU-recht risico", "laag risico",
@@ -126,29 +135,28 @@ const binaryColumns = [
     'ingeperkt', 'kost', 'laag', 'lager', 'lagere lasten', 'moeilijker', 'niet in lijn', 'uitgebreid', 'verbeterd', 'verslechterd'
 ];
 
+
 const impactKeys = [
- 'asiel_toegankelijkheid', 'dierenwelzijn_effect', 'rechten_effect',
- 'palestina_effect', 'oekraine_effect', 'defensieuitgaven', 
- 'israel_effect',  'fiscaal_label', 'economische_kosteneffect', 
- 'schiphol_capaciteit', 'milieu_effect', 'pas_melders_effect',
-
- 'koopwoning_effect', 'huurmarkt_effect', 'hypotheeklasten_effect',
- 'gemeentelijke_last', 'provinciale_last', 'uitvoeringsmoeilijkheid',
- 
-  // 'juridische_risico', 'financieringsbron',
- 
- 'kosten_van_leven_effect', 'zorg_effect', 'sociale_zekerheidseffect', 
- 'kinderopvang_betaalbaarheid', , 'veiligheids_effect', 'box3_effect',
- 'coalitieakkoord_consistentie',
-
+ 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label',
+ 'defensieuitgaven', 'dierenwelzijn_effect',
+ 'economische_kosteneffect', 
+ 'gemeentelijke_last', 'huurmarkt_effect', 'hypotheeklasten_effect',
+ 'israel_effect', 'kinderopvang_betaalbaarheid',
+ 'koopwoning_effect', 'kosten_van_leven_effect', 'milieu_effect',
+ 'oekraine_effect', 'palestina_effect', 'pas_melders_effect',
+ 'provinciale_last', 'schiphol_capaciteit', 'zorg_effect',
+ 'sociale_zekerheidseffect', 'veiligheids_effect',
+ 'mensenrechten_effect',
 ];
 
-
-
 function ImpactChart({ title, id }) {
-    const { parties, normalize, binary, addImpactFilter, impacts } = useData();
+    const { parties, normalize, binary, addImpactFilter, impacts, setExplanation, } = useData();
 
-    const impacts_ = !binary ? Object.entries(impacts[id]).filter(([impact, _]) => binaryColumns.includes(impact)) : Object.entries(impacts[id]);
+    const impacts_ = (
+        !binary ?
+            Object.entries(impacts[id]).filter(([impact, _]) => binaryColumns.includes(impact)) :
+            Object.entries(impacts[id])
+    ).filter(([impact, _]) => impact !== 'ignore');
 
     const factors = Object.fromEntries(parties.map(party => [party, 
         !normalize ? 
@@ -184,13 +192,13 @@ function ImpactChart({ title, id }) {
     };
     
     return <Box>
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h6">{title} <IconButton onClick={() => setExplanation(id)}><InfoOutlineIcon/></IconButton></Typography>
         <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} hideLegend={!use_neutral_color_for.includes(id)} onItemClick={barClick} />
     </Box>
 }
 
 function SymbolismChart() {
-    const { symbolism, parties, normalize, binary } = useData();
+    const { symbolism, parties, normalize, binary, addImpactFilter, setExplanation, } = useData();
 
     const order = ['Voor', 'Tegen', 'Onthouden', 'Niet gestemd'];
     if (!('symbolisch' in symbolism))
@@ -207,7 +215,7 @@ function SymbolismChart() {
     
     const series = symbolic_.map(([vote, vote_data]) => ({
         label: t(vote), stack: 'total', id: `${vote}`, color: colorFor('symbolism', vote),
-        data: parties.map(party => vote_data[party] / factors[party]),
+        data: parties.map(party => (vote_data[party] || 0) / (factors[party] || 1)),
     })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
 
     const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
@@ -215,9 +223,53 @@ function SymbolismChart() {
                     ...(!normalize ? {min: 0, max: 100}: {}),
                     width: 65, }];
     
+    const barClick = (e, item) => {
+        const party = parties[item['dataIndex']];
+        const vote = item['seriesId'];
+        addImpactFilter("doel", party, "symbolisch", vote);
+    };
     return <Box>
-        <Typography variant="h6">{t("Symbolism")}</Typography>
-        <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis}/>
+        <Typography variant="h6">{t("Symbolism")} <IconButton onClick={() => setExplanation("doel")}><InfoOutlineIcon/></IconButton></Typography>
+        <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} onItemClick={barClick}/>
+    </Box>
+}
+
+
+function PropertyChart({vote, property}) {
+    const { behaviors, parties, normalize, binary, addImpactFilter, setExplanation, } = useData();
+
+    if (!(property in behaviors || !(vote in behaviors[property].counts)))
+        return <p>{t("No votes.")}</p>;
+
+    const behavior = behaviors[property].counts[vote];
+    const behavior_ = !binary ? Object.entries(behavior).filter(([value, _]) => binaryColumns.includes(value)) : Object.entries(behavior);
+
+    const factors = Object.fromEntries(parties.map(party => [party, 
+        normalize ? 1 : (
+            behavior_.map(([_, value_data]) => value_data[party]).reduce((a, b) => a + b, 0) / 100
+        )
+    ]))
+    
+    const series = behavior_.map(([value, value_data]) => ({
+        label: t(value), stack: 'total', id: `${value}`, color: colorFor(property, value),
+        data: parties.map(party => (value_data[party] || 0) / (factors[party] || 1)),
+    })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
+
+    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
+    const yAxis = [{label: !normalize ? t('Votes (%)') : t('Votes'),
+                    ...(!normalize ? {min: property === 'financieringsbron' ? 75 : 0, max: 100}: {}),
+                    width: 65, }];
+
+
+    const barClick = vote => ((e, item) => {
+        const party = parties[item['dataIndex']];
+        const value = item['seriesId'];
+        addImpactFilter(property, party, value, vote);
+    });
+    
+    return <Box>
+        <Typography variant="h6">{t(property)} ({t(vote)}) <IconButton onClick={() => setExplanation(property)}><InfoOutlineIcon/></IconButton></Typography>
+        <BarChart height={250} series={series} xAxis={xAxis} yAxis={yAxis} onItemClick={barClick(vote)}/>
     </Box>
 }
 
@@ -225,7 +277,7 @@ export function ParliamentaryVotes({}) {
     const { t } = useTranslation();
     const { loading, error, metadata, binary, showDecisions,
         impactFilters, removeImpactFilter, informationOpen, setInformationOpen,
-        showBeneficiaries} = useData();
+        showBeneficiaries, } = useData();
     
     
     const infoDialog = <Info information={informationOpen} setInformation={setInformationOpen} ></Info>;
@@ -252,7 +304,7 @@ export function ParliamentaryVotes({}) {
             legendItems[color].push(t(item));
     });
 
-    const impactFilters_ = impactFilters.map(([area, party, impact]) => <Chip key={`${area}-${party}-${impact}`} color="primary" variant="outlined" style={{marginLeft: '10px'}} label={`${party} | ${t("f_" + impact)} | ${t(area)}`} variant="outlined" onDelete={() => removeImpactFilter(area, party, impact)}/>);
+    const impactFilters_ = impactFilters.map(([area, party, impact, vote]) => <Chip key={`${area}-${party}-${impact}-${vote}`} color="primary" style={{marginLeft: '10px'}} label={`${party} | ${t("f_" + impact)} | ${t(area)}${vote ? ' | ' + t(vote) : ''}`} variant="outlined" onDelete={() => removeImpactFilter(area, party, impact, vote)}/>);
 
     return <><Box sx={{p: 0, mx:'auto'}}>
         
@@ -263,6 +315,10 @@ export function ParliamentaryVotes({}) {
             </Grid>
             <Grid key="graphs-box" container size={{lg: 9, md: 8}} className={`fill-vertically sm-full-width ${showDecisions ? "hide-sm " : ""}`}>
                 {!showBeneficiaries ? <Grid key="legend" size={12} p={5}>
+                    <Typography variant="h6">
+                        Wat was het effect van de stemmen, als het besluit die kant op gevallen was?
+                    </Typography>
+                    
                     {Object.entries(legendItems).map(([color, items]) => {
                         return <p key={`legend-item-${items[0]}`}><span style={{display: 'inline-block', width: '20px', height: '20px', backgroundColor: color}}/>&nbsp;{items.join(", ")}</p>
                     })}
@@ -276,7 +332,16 @@ export function ParliamentaryVotes({}) {
                     {!showBeneficiaries ? <Grid key="symbolism-chart" size={{'xs': 12, 'sm': 12, 'md': 6, 'lg': 4}}>
                         <SymbolismChart />
                     </Grid> : undefined}
+                    <Grid key="clear-01" size={12}>
+                        <Typography variant="h6">
+                            Haalbaarheid van besluiten, stemmen partijen voor of tegen?
+                        </Typography>
+                    </Grid>
+                    {!showBeneficiaries ? properties.map(property => <Grid key={`${property}-chart`} size={{'xs': 12, 'sm': 12, 'md': 6, 'lg': 4}}>
+                        <PropertyChart key="voor" vote="Voor" property={property}/>
+                        <PropertyChart key="tegen" vote="Tegen" property={property}/>
+                    </Grid>) : undefined}
             </Grid>
         </Grid>
-    </Box>{infoDialog}</>
+    </Box>{infoDialog}<AnnotationDialogue/></>
 }

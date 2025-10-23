@@ -5,23 +5,23 @@ import { useContext } from 'react';
 import { t } from 'i18next';
 
 import JSZip from 'jszip';
-import dataFile from "../data/party_stances.zip"
-import { data } from 'react-router';
+import dataFile from "../data/party_stances.json"
 
 const initialState = {};
 const FilterContext = createContext(initialState);
 
+const properties = ['coalitieakkoord_consistentie', 'eu_kaders', 'uitvoeringsmoeilijkheid', 'financieringsbron',]
 
 const impacts = [
- 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label', 
- 'coalitieakkoord_consistentie', 'defensieuitgaven', 'dierenwelzijn_effect',
- 'economische_kosteneffect', 'eu_dimensie', 'financieringsbron',
+ 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label',
+ 'defensieuitgaven', 'dierenwelzijn_effect', 'economische_kosteneffect', 
  'gemeentelijke_last', 'huurmarkt_effect', 'hypotheeklasten_effect',
- 'israel_effect', 'juridische_risico', 'kinderopvang_betaalbaarheid',
+ 'israel_effect', 'kinderopvang_betaalbaarheid', 'mensenrechten_effect', 
  'koopwoning_effect', 'kosten_van_leven_effect', 'milieu_effect',
  'oekraine_effect', 'palestina_effect', 'pas_melders_effect',
- 'provinciale_last', 'rechten_effect', 'schiphol_capaciteit', 'zorg_effect',
- 'sociale_zekerheidseffect', 'uitvoeringsmoeilijkheid', 'veiligheids_effect', ];
+ 'provinciale_last', 'schiphol_capaciteit', 'zorg_effect',
+ 'sociale_zekerheidseffect', 'veiligheids_effect',
+];
 
 const seats = {
   "PVV": "37",
@@ -88,14 +88,46 @@ export function useThrottledSetter(setState, delay = 1000) {
 }
 
 
+function getPropertyBehavior(property, votes, parties, data, metadata, columns, metadata_columns) {
+  if (metadata_columns.length == 0) {
+    return;
+  }
+    
+  const NUMMER_COLUMN = columns.indexOf('Nummer');
+  const MD_NUMMER_COLUMN = metadata_columns.indexOf('Nummer');
+  const MD_VALUE_COLUMN = metadata_columns.indexOf(property);
+  const COUNT_COLUMN = columns.indexOf('count');
+  const PARTY_COLUMN = columns.indexOf('party');
+  const VOTE_COLUMN = columns.indexOf('vote');
+
+  const nummer_to_value = Object.fromEntries(metadata.map(md => [md[MD_NUMMER_COLUMN], md[MD_VALUE_COLUMN]]));
+  const all_values = Array.from(new Set(Object.values(nummer_to_value)));
+  
+  var counts = Object.fromEntries(votes.map(vote => [vote, Object.fromEntries(all_values.map(value => [
+    value, Object.fromEntries(parties.map(party => [party, 0]))]))]));
+  
+  data.map(impact => {
+      const nummer = impact[NUMMER_COLUMN];
+      const party = impact[PARTY_COLUMN];
+      const count = impact[COUNT_COLUMN];
+      const vote = impact[VOTE_COLUMN];
+      const value = nummer_to_value[nummer];
+      counts[vote][value][party] += count;
+  });
+
+  return {
+    'values': all_values,
+    'counts': counts
+  }
+}
+
 
 function runFilters(data, metadata, metadata_columns, columns,
     topic, keywords, normalize,
     backed, neutral, symbolic, realistic,
     impactFilters, filterBeneficiaries
   ) {
-  const MD_NUMBER_COLUMN = data ? metadata_columns.indexOf('Nummer') : -1;
-  const NUMBER_COLUMN = data ? columns.indexOf('Nummer') : -1;
+  const NUMMER_COLUMN = data ? columns.indexOf('Nummer') : -1;
   const PARTY_COLUMN = data ? columns.indexOf('party') : -1;
   const TOPIC_COLUMN = data ? metadata_columns.indexOf('onderwerp') : -1;
   
@@ -110,7 +142,6 @@ function runFilters(data, metadata, metadata_columns, columns,
   const MD_PURPOSE_COLUMN = data ? metadata_columns.indexOf("doel"): -1;
   const MD_BACKED_COLUMN = data ? metadata_columns.indexOf("bevat_kostenstrategie"): -1;
   
-  const NUMMER_COLUMN = data ? columns.indexOf('Nummer'): -1;
   const MD_NUMMER_COLUMN = data ? metadata_columns.indexOf('Nummer') : -1;
 
   var filteredMetadata = metadata;
@@ -144,25 +175,37 @@ function runFilters(data, metadata, metadata_columns, columns,
 
   if (impactFilters.length > 0) {
     var nummers = null;
-    impactFilters.map(([area, party, impact]) => {
-      const newNummers = new Set(filteredData.filter(
-        sample => sample[columns.indexOf(area)] === impact && sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0
-      ).map(sample => sample[NUMMER_COLUMN]));
-      nummers = nummers ? newNummers.intersection(nummers) : newNummers;
+    impactFilters.map(([area, party, impact, vote]) => {
+      if (area === "doel" || properties.includes(area)) {
+        const newNummers0 = new Set(filteredMetadata.filter(
+          sample => sample[metadata_columns.indexOf(area)] === impact
+        ).map(sample => sample[MD_NUMMER_COLUMN]));
+        
+        const newNummers1 = new Set(filteredData.filter(
+          sample => sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0 && sample[VOTE_COLUMN] === vote
+        ).map(sample => sample[NUMMER_COLUMN]));
+        const newNummers = newNummers0.intersection(newNummers1);
+        nummers = nummers ? newNummers.intersection(nummers) : newNummers;
+      } else {
+        const newNummers = new Set(filteredData.filter(
+          sample => sample[columns.indexOf(area)] === impact && sample[PARTY_COLUMN] === party && sample[COUNT_COLUMN] > 0
+        ).map(sample => sample[NUMMER_COLUMN]));
+        nummers = nummers ? newNummers.intersection(nummers) : newNummers;
+      }
     });
     filteredMetadata = filteredMetadata.filter(metadata => {
       return nummers.has(metadata[MD_NUMMER_COLUMN]);
     })
   }
 
-  const numbers = new Set(filteredMetadata.map(md => md[MD_NUMBER_COLUMN])).intersection(new Set(filteredData.map(d => d[NUMBER_COLUMN])));
+  const numbers = new Set(filteredMetadata.map(md => md[MD_NUMMER_COLUMN])).intersection(new Set(filteredData.map(d => d[NUMMER_COLUMN])));
   
   filteredData = filteredData.filter(sample => {
-    return numbers.has(sample[NUMBER_COLUMN]);
+    return numbers.has(sample[NUMMER_COLUMN]);
   });
 
   filteredMetadata = filteredMetadata.filter(sample => {
-    return numbers.has(sample[MD_NUMBER_COLUMN]);
+    return numbers.has(sample[MD_NUMMER_COLUMN]);
   });
 
   const impacts = getImpactSummaries(filteredData, columns);
@@ -203,8 +246,7 @@ function runFilters(data, metadata, metadata_columns, columns,
     }));
 
   const votes = Array.from(new Set(data.map(x => x[VOTE_COLUMN])));
-  const all_nummers = Array.from(new Set(data.map(x => x[NUMMER_COLUMN])));
-  const nummer_to_purpose = Object.fromEntries(filteredMetadata.map(md => [md[MD_NUMBER_COLUMN], md[MD_PURPOSE_COLUMN]]));
+  const nummer_to_purpose = Object.fromEntries(filteredMetadata.map(md => [md[MD_NUMMER_COLUMN], md[MD_PURPOSE_COLUMN]]));
   const all_purposes = Array.from(new Set(Object.values(nummer_to_purpose)));
 
   var symbolism = Object.fromEntries(all_purposes.map(purpose => [purpose, Object.fromEntries(votes.map(vote => [
@@ -217,13 +259,29 @@ function runFilters(data, metadata, metadata_columns, columns,
       const vote = impact[VOTE_COLUMN];
       symbolism[nummer_to_purpose[nummer]][vote][party] += count;
   });
+  
+  var symbolism = Object.fromEntries(all_purposes.map(purpose => [purpose, Object.fromEntries(votes.map(vote => [
+    vote, Object.fromEntries(parties.map(party => [party, 0]))]))]));
+  
+  filteredData.map(impact => {
+      const nummer = impact[NUMMER_COLUMN];
+      const party = impact[PARTY_COLUMN];
+      const count = impact[COUNT_COLUMN];
+      const vote = impact[VOTE_COLUMN];
+      symbolism[nummer_to_purpose[nummer]][vote][party] += count;
+  });
 
-  return { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism };
+  const behaviors = Object.fromEntries(properties.map(property => [
+    property, getPropertyBehavior(property, votes, parties, filteredData, filteredMetadata, columns, metadata_columns)]));
+  window.behaviors = behaviors;
+
+  return { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism, behaviors};
 }
 
 export const FilterProvider = ({ children }) => {
   const [isOpen, setOpen] = useState(false); // whether the header menu is open on mobile.
   const [informationOpen, setInformationOpen] = useState(false);
+  const [explanation, setExplanation] = useState(null);
 
   const [keywords, setKeywords] = useState("");
   const [binary, setBinary] = useState(false);
@@ -247,14 +305,14 @@ export const FilterProvider = ({ children }) => {
   const throttledSetKeywords = useThrottledSetter(setKeywords, 1000);
   const throttledSetFilterBeneficiaries = useThrottledSetter(setFilterBeneficiaries, 1000);
   const { data, metadata, metadata_columns, columns } = allData;
-
-  function addImpactFilter(area, party, impact) {
-    if (impactFilters.filter(([a, p, i]) => a===area && p === party && i === impact).length > 0)
+  
+  function addImpactFilter(area, party, impact, vote) {
+    if (impactFilters.filter(([a, p, i, v]) => a===area && p === party && i === impact && v === vote).length > 0)
       return
-    setImpactFilters(filters => [...filters, [area, party, impact]]);
+    setImpactFilters(filters => [...filters, [area, party, impact, vote]]);
   }
-  function removeImpactFilter(area, party, impact) {
-    const newFilters = impactFilters.filter(([a, p, i]) => a!==area || p !== party || i !== impact);
+  function removeImpactFilter(area, party, impact, vote) {
+    const newFilters = impactFilters.filter(([a, p, i, v]) => a!==area || p !== party || i !== impact || (v !== vote));
     if (newFilters.length !== impactFilters.length)
       setImpactFilters(newFilters);
   }
@@ -264,16 +322,17 @@ export const FilterProvider = ({ children }) => {
     const loadData = async () => {
       // try {
         const response = await fetch(dataFile);
-        const arrayBuffer = await response.arrayBuffer();
-        const zip = await JSZip.loadAsync(arrayBuffer);
-        const jsonFile = zip.file('party_stances.json');
-        if (jsonFile) {
-          const jsonContent = await jsonFile.async('text');
-          window.data = JSON.parse(jsonContent);
-          setData(JSON.parse(jsonContent));
-        } else {
-          setError(t("Couldn't get data") + ".")
-        }
+        setData(await response.json());
+        // const arrayBuffer = await response.arrayBuffer();
+        // const zip = await JSZip.loadAsync(arrayBuffer);
+        // const jsonFile = zip.file('party_stances.json');
+        // if (jsonFile) {
+        //   const jsonContent = await jsonFile.async('text');
+        //   window.data = JSON.parse(jsonContent);
+        //   setData(JSON.parse(jsonContent));
+        // } else {
+        //   setError(t("Couldn't get data") + ".")
+        // }
         setLoading(false);
       // } catch (e) {
       //   setLoading(false);
@@ -283,11 +342,14 @@ export const FilterProvider = ({ children }) => {
     loadData();
   }, []);
   
-  const { filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries, beneficiaries, beneficiary_counts, symbolism } = React.useMemo(() => {
+  const {
+    filteredData, filteredMetadata, impacts, topics, parties, all_beneficiaries,
+    beneficiaries, beneficiary_counts, symbolism, behaviors
+  } = React.useMemo(() => {
     return runFilters(data, metadata, metadata_columns, columns,
       topic, keywords, normalize,
       backed, neutral, symbolic, realistic, impactFilters,
-      filterBeneficiaries
+      filterBeneficiaries,
     );
   }, [data, metadata, metadata_columns, columns,
       topic, keywords, normalize,
@@ -310,7 +372,8 @@ export const FilterProvider = ({ children }) => {
     backed, setBacked, neutral, setNeutral, symbolic, setSymbolic,  realistic, setRealistic,
     all_beneficiaries, beneficiaries, beneficiary_counts,
     showBeneficiaries, setShowBeneficiaries, filterBeneficiaries, setFilterBeneficiaries: throttledSetFilterBeneficiaries,
-    seats, symbolism
+    seats, symbolism, behaviors, 
+    explanation, setExplanation,
   }}>{children}</FilterContext.Provider>;
 };
 

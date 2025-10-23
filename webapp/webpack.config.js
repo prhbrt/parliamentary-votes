@@ -20,9 +20,8 @@ module.exports = {
     ],
     module: {
         rules: [
-          
             {
-              test: /data\/party_stances\.zip$/,
+              test: /data\/party_stances\.json$/,
               type: 'asset/resource',
               generator: {
                 filename: 'assets/[name][ext]'
@@ -70,7 +69,7 @@ module.exports = {
     port: 3000,
   },
   resolve: {
-      extensions: [".js", ".json", ".ts", ".tsx"],
+      extensions: [".js", ".ts", ".tsx"],
       fallback: {
         buffer: require.resolve('buffer/'),
         util: require.resolve("util/"),

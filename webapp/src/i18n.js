@@ -88,7 +88,7 @@ const resources = {
       "environment_impact": "Impact op het klimaat en milieu",
       "fiscal_tag": "Fiscale impact",
       "healthcare_impact": "impact op de gezondheidszorg",
-      "rights_impact": "Impact op mensenrechten",
+      "mensenrechten_effect": "Impact op mensenrechten",
       "security_impact": "Impact on veiligheid",
       "social_security_impact": "Impact op sociale zekerheden",
       "No beneficiaries": "Geen begunstigden",
@@ -97,7 +97,7 @@ const resources = {
       "f_environment_impact": "klimaat en milieu",
       "f_fiscal_tag": "belastingen",
       "f_healthcare_impact": "de gezondheidszorg",
-      "f_rights_impact": "mensenrechten",
+      "f_mensenrechten_effect": "mensenrechten",
       "f_security_impact": "de veiligheid",
       "f_social_security_impact": "sociale zekerheden",
 
@@ -156,6 +156,7 @@ const resources = {
       "f_geen / niet relevant": "geen / niet relevant",
       "f_unclear": "unclear",
       "f_onduidelijk": "onduidelijk",
+      "f_symbolisch": "symbolisch",
 
 
 
@@ -230,10 +231,11 @@ const resources = {
       'milieu_effect': "Effect op het milieu",
       'pas_melders_effect': "Hulp aan PAS-melders",
       'provinciale_last': "Last voor gemeenten",
-      'rechten_effect': "Effect op mensenrechten",
+      'mensenrechten_effect': "Effect op mensenrechten",
       'zorg_effect': "Effect op zorg",
       'sociale_zekerheidseffect': "Effect op sociale zekerheden",
       'veiligheids_effect': "Effect op veiligheid",
+      "eu_kaders": "Conflict met juridische kaders EU",
 
 
       'asiel_toegankelijkheid': "Toegankelijkheid voor asielzoekers",

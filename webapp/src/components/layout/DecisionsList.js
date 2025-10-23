@@ -24,33 +24,20 @@ import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
+const properties = ['coalitieakkoord_consistentie', 'uitvoeringsmoeilijkheid', 'financieringsbron', 'eu_kaders', ]
 
 const impactKeys = [
- 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label', 
- 'coalitieakkoord_consistentie', 'defensieuitgaven', 'dierenwelzijn_effect',
- 'economische_kosteneffect', 'eu_dimensie', 'financieringsbron',
+ 'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label',
+ 'defensieuitgaven', 'dierenwelzijn_effect',
+ 'economische_kosteneffect', 
  'gemeentelijke_last', 'huurmarkt_effect', 'hypotheeklasten_effect',
- 'israel_effect', 'juridische_risico', 'kinderopvang_betaalbaarheid',
+ 'israel_effect', 'kinderopvang_betaalbaarheid',
  'koopwoning_effect', 'kosten_van_leven_effect', 'milieu_effect',
  'oekraine_effect', 'palestina_effect', 'pas_melders_effect',
- 'provinciale_last', 'rechten_effect', 'schiphol_capaciteit', 'zorg_effect',
- 'sociale_zekerheidseffect', 'uitvoeringsmoeilijkheid', 'veiligheids_effect', ];
-
-const colors = {
-    "lower": "#60B669",
-    "saves": "#60B669",
-    "expands": "#60B669",
-    "improves": "#60B669",
-    "budget-neutral": "#FFDC64",
-    "neutral": "#FFDC64",
-    "worsens": "#dc002d",
-    "higher": "#dc002d",
-    "costs": "#dc002d",
-    "restricts": "#dc002d",
-    "not-participated": "#009CEF",
-    "n/a": "#772D68",
-    "unclear": "#CCCCCC",
-}
+ 'provinciale_last', 'schiphol_capaciteit', 'zorg_effect',
+ 'sociale_zekerheidseffect', 'veiligheids_effect',
+ 'mensenrechten_effect',
+];
 
 
 export default function DecisionsList({}) {
@@ -58,7 +45,7 @@ export default function DecisionsList({}) {
    const {t} = useTranslation()
    const theme = useTheme();
    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-   const maxWidth = useMediaQuery(theme.breakpoints.down('sm')) ? "md" : undefined;
+   const maxWidth = useMediaQuery(theme.breakpoints.down('sm')) ? "lg" : undefined;
    const [selectedDecision, setSelectedDecision] = useState(null);
 
    const FAVOR_BENEFICIARIES_COLUMN = metadataColumns.indexOf("begunstigden_van_stem_voor")
@@ -77,6 +64,9 @@ export default function DecisionsList({}) {
    const MD_NUMMER_COLUMN = metadataColumns.indexOf("Nummer")
    const AFGEDANA_COLUMN = metadataColumns.indexOf("Afgedaan")
    const IMPACT_COLUMNS = Object.fromEntries(impactKeys.map(impact => [impact, metadataColumns.indexOf(impact)]));
+   const PROPERTY_COLUMNS = Object.fromEntries(properties.map(property => [property, metadataColumns.indexOf(property)]));
+   const MD_IMPACT_NOTES_COLUMNS = Object.fromEntries(impactKeys.map(impact => [impact, metadataColumns.indexOf(impact + '_notities')]));
+   const MD_PROPERTY_NOTES_COLUMNS = Object.fromEntries(properties.map(property => [property, metadataColumns.indexOf(property + '_notities')]));
 
    const handleClickOpen = (decision) => {
      setSelectedDecision(decision);
@@ -87,64 +77,102 @@ export default function DecisionsList({}) {
    };
 
   
-  return (
-    <List sx={{ width: '100%', flexGrow: 1, bgcolor: 'background.paper' }} className={`decisions-list ${isOpen? "open ": "closed "}`} >
-      <Virtuoso className={`decisions-virtuoso ${isOpen? "open ": "closed "}`} data={metadata} itemContent={(index, decision) => {
-          return <>
-            <ListItem alignItems="flex-start" onClick={() => handleClickOpen(decision)} style={{cursor: 'pointer'}}>
-               <ListItemText primary={<><span style={{fontSize: '8pt'}}>{decision[TITEL_COLUMN]}</span> — {decision[ONDERWERP_COLUMN]}</>}/>
-             </ListItem>
-             <Divider variant="inset" component="li" />
-          </>
-      }}
-    />
+  return (<>
+      <List sx={{ width: '100%', flexGrow: 1, bgcolor: 'background.paper' }} className={`decisions-list ${isOpen? "open ": "closed "}`} >
+        <Virtuoso className={`decisions-virtuoso ${isOpen? "open ": "closed "}`} data={metadata} itemContent={(index, decision) => {
+            return <>
+              <ListItem alignItems="flex-start" onClick={() => handleClickOpen(decision)} style={{cursor: 'pointer'}}>
+                <ListItemText primary={<><span style={{fontSize: '8pt'}}>{decision[TITEL_COLUMN]}</span> — {decision[ONDERWERP_COLUMN]}</>}/>
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </>
+        }}
+      />
 
-    <Dialog open={!(!selectedDecision)} onClose={handleClose} maxWidth={maxWidth} fullScreen={fullScreen}>
-      <DialogTitle>{selectedDecision ? selectedDecision[TITEL_COLUMN] : ''}</DialogTitle>
-      <DialogContent>
-        <Typography variant="h6">{selectedDecision ? selectedDecision[ONDERWERP_COLUMN] : ''}</Typography>
-        <Typography variant="body1">{selectedDecision ? selectedDecision[DECISION_COLUMN] : ''}</Typography>
-        <Typography variant="body1">{selectedDecision ? selectedDecision[NOTES_COLUMN] : ''}</Typography>
-        {selectedDecision && selectedDecision[FAVOR_BENEFICIARIES_COLUMN].length > 0 ? <Typography variant="body1">
-          Begunstigden van stem voor: {selectedDecision ? selectedDecision[FAVOR_BENEFICIARIES_COLUMN].join(", ") : ''}
-        </Typography> : undefined}
-        {selectedDecision && selectedDecision[AGAINST_BENEFICIARIES_COLUMN].length > 0 ? <Typography variant="body1">
-          Begunstigden van stem tegen: {selectedDecision[AGAINST_BENEFICIARIES_COLUMN].join(", ")}
-        </Typography> : undefined}
-        
-        <Typography variant="body2">
-          <a href={`https://www.tweedekamer.nl/zoeken?qry=${selectedDecision ? selectedDecision[MD_NUMMER_COLUMN] : ''}`} target="_blank">tweedekamer.nl</a>
-        </Typography>
+      </List>
 
-        <Typography variant="h6" style={{marginTop: '20px'}}>Impacts</Typography>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Impact</TableCell>
-              <TableCell>Van Stem Voor</TableCell>
-              <TableCell>Van Stem Tegen</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {impactKeys.map(impact => (
-              <TableRow key={impact}>
-                <TableCell>{t(impact)}</TableCell>
-                <TableCell style={{color: selectedDecision ? colors[selectedDecision[IMPACT_COLUMNS[impact]]] : ''}}>
-                  {selectedDecision ? t(selectedDecision[IMPACT_COLUMNS[impact]][1]) : ''}
-                </TableCell>
-                <TableCell style={{color: selectedDecision ? colors[selectedDecision[IMPACT_COLUMNS[impact]]] : ''}}>
-                  {selectedDecision ? t(selectedDecision[IMPACT_COLUMNS[impact]][0]) : ''}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
-      </DialogActions>
-    </Dialog>
+      <Dialog open={!(!selectedDecision)} onClose={handleClose} maxWidth={maxWidth} fullScreen={fullScreen}>
+        {selectedDecision ? <>
+          <DialogTitle>{selectedDecision[TITEL_COLUMN]}</DialogTitle>
+          <DialogContent>
+            <Typography variant="h6">{selectedDecision[ONDERWERP_COLUMN]}</Typography>
+            <Typography variant="body1">{selectedDecision[DECISION_COLUMN]}</Typography>
+            <Typography variant="body1">{selectedDecision[NOTES_COLUMN]}</Typography>
+            <Typography variant="body1">
+              Begunstigden van stem voor: {selectedDecision[FAVOR_BENEFICIARIES_COLUMN].join(", ")}
+            </Typography>
+            <Typography variant="body1">
+              Begunstigden van stem tegen: {selectedDecision[AGAINST_BENEFICIARIES_COLUMN].join(", ")}
+            </Typography>
+            
+            <Typography variant="body2">
+              <a href={`https://www.tweedekamer.nl/zoeken?qry=${selectedDecision ? selectedDecision[MD_NUMMER_COLUMN] : ''}`} target="_blank">tweedekamer.nl</a>
+            </Typography>
+            <Typography variant="h6" style={{marginTop: '20px'}}>Haalbaarheid</Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell>Haalbaarheid</TableCell>
+                  <TableCell>Waarom</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {properties.map(property => {
+                  const value = selectedDecision[PROPERTY_COLUMNS[property]]
+                  // if (value === 'ignore')
+                  //   return undefined;
 
-    </List>
+                  return <TableRow key={property}>
+                    <TableCell>{t(property)}</TableCell>
+                    <TableCell>
+                      {t(value)}
+                    </TableCell>
+                    <TableCell>
+                      {selectedDecision[MD_PROPERTY_NOTES_COLUMNS[property]]}
+                    </TableCell>
+                  </TableRow>
+                })}
+              </TableBody>
+            </Table>
+
+            <Typography variant="h6" style={{marginTop: '20px'}}>Impacts</Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Impact</TableCell>
+                  <TableCell>Van Stem Voor</TableCell>
+                  <TableCell>Van Stem Tegen</TableCell>
+                  <TableCell>Waarom</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {impactKeys.map(impact => {
+                  const [against, favor] = selectedDecision[IMPACT_COLUMNS[impact]]
+                  if (against === 'ignore' && favor === 'ignore')
+                    return undefined;
+
+                  return <TableRow key={impact}>
+                    <TableCell>{t(impact)}</TableCell>
+                    <TableCell>
+                      {t(favor)}
+                    </TableCell>
+                    <TableCell>
+                      {t(against)}
+                    </TableCell>
+                    <TableCell>
+                      {selectedDecision[MD_IMPACT_NOTES_COLUMNS[impact]]}
+                    </TableCell>
+                  </TableRow>
+                })}
+              </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>{t("Close")}</Button>
+          </DialogActions>
+        </>: undefined}
+      </Dialog>
+    </>
   );
 }
