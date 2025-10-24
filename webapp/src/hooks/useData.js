@@ -10,7 +10,7 @@ import dataFile from "../data/party_stances.json"
 const initialState = {};
 const FilterContext = createContext(initialState);
 
-const properties = ['coalitieakkoord_consistentie', 'eu_kaders', 'uitvoeringsmoeilijkheid', 'financieringsbron',]
+const properties = ['coalitieakkoord_consistentie', 'uitvoeringsmoeilijkheid', 'financieringsbron',]
 
 const impacts = [
  'asiel_toegankelijkheid', 'box3_effect', 'fiscaal_label',

@@ -24,12 +24,12 @@ import { AnnotationDialogue } from '../AnnotationInfo';
 
 window.tinygradient = tinygradient;
 
-const properties = ['coalitieakkoord_consistentie', 'uitvoeringsmoeilijkheid', 'financieringsbron', 'eu_kaders', ]
+const properties = ['coalitieakkoord_consistentie', 'uitvoeringsmoeilijkheid', 'financieringsbron', ]
 
 const use_neutral_color_for = [
     'asiel_toegankelijkheid', 'oekraine_effect', 'palestina_effect', 'israel_effect', 'schiphol_capaciteit', 'defensieuitgaven',
     'oekraine_effect', 'palestina_effect', 'asiel_toegankelijkheid', ' uitvoeringsmoeilijkheid', 'juridische_risico', 'eu_dimensie',
-    'financieringsbron', 'eu_kaders', 'financieringsbron'
+    'financieringsbron', 'financieringsbron'
 ]
 
 const neutral_colors = {
@@ -180,7 +180,7 @@ function ImpactChart({ title, id }) {
         data: parties.map(party => Math.round((impacts_[party] || 0) / (factors[party]) || 1)),
     })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
 
-    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
+    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 9}}];
     const yAxis = [{label: !normalize ? t('Votes (%)') : t('Votes'),
                     ...(!normalize ? {min: yMin, max: 100}: {}),
                     width: 65, fill: yMin > 0 ? '#dc002d': '#000', tick: yMin > 0 ? '#dc002d': '#000', }];
@@ -218,7 +218,7 @@ function SymbolismChart() {
         data: parties.map(party => (vote_data[party] || 0) / (factors[party] || 1)),
     })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
 
-    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
+    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 9}}];
     const yAxis = [{label: !normalize ? t('Votes (%)') : t('Votes'),
                     ...(!normalize ? {min: 0, max: 100}: {}),
                     width: 65, }];
@@ -255,7 +255,7 @@ function PropertyChart({vote, property}) {
         data: parties.map(party => (value_data[party] || 0) / (factors[party] || 1)),
     })).sort((a, b) => order.indexOf(a.id) > order.indexOf(b.id) ? 1 : -1)
 
-    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 12}}];
+    const xAxis = [{data: parties.map(p => shortNames[p]), height: 65, scaleType: 'band', tickLabelStyle: {angle: 90, textAnchor: 'start', fontSize: 9}}];
     const yAxis = [{label: !normalize ? t('Votes (%)') : t('Votes'),
                     ...(!normalize ? {min: property === 'financieringsbron' ? 75 : 0, max: 100}: {}),
                     width: 65, }];

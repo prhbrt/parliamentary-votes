@@ -235,7 +235,7 @@ const resources = {
       'zorg_effect': "Effect op zorg",
       'sociale_zekerheidseffect': "Effect op sociale zekerheden",
       'veiligheids_effect': "Effect op veiligheid",
-      "eu_kaders": "Conflict met juridische kaders EU",
+      "eu_kaders": "Juridische kaders EU",
 
 
       'asiel_toegankelijkheid': "Toegankelijkheid voor asielzoekers",
