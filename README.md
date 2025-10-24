@@ -9,7 +9,7 @@ A React-based web application for visualizing and exploring parliamentary voting
 - Interactive visualization of parliamentary votes
 - Party stance analysis
 - Filtering and search capabilities
-- Multilingual support (English/Dutch)
+- Multilingual support (English/Dutch, English not really implemented though considering the topic)
 - Responsive design with Material-UI components
 - Real-time data processing
 
