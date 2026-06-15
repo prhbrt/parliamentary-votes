@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import { Virtuoso } from 'react-virtuoso'
 import { useData } from '../../hooks/useData';
 
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslation } from 'react-i18next';
 
 import { useState } from 'react';
